@@ -1,0 +1,38 @@
+.page_sidebar {
+    margin-top: 7.6rem;
+    width: 250px;
+    height: 64.5rem;
+    min-height: 100%;
+    position: relative;
+    top: 0;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    z-index: 1001;
+    background-color: #fff;
+    box-shadow: 3px 3px 5px 0px rgb(0 0 0 / 8%);
+}
+
+.sidebar_user {
+    display: inline-flex;
+    padding: 0.4rem 0.4rem;
+}
+
+.user_name {
+    font-size: 2rem;
+    padding: 0 0.6rem;
+}
+
+.user_title {
+    font-size: 1.6rem;
+    padding: 0 1.6rem;
+}
+
+.icon {
+    font-size: 2.4rem;
+}
+
+.link {
+    text-decoration: none;
+    color: #333;
+}

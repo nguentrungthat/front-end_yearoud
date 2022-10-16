@@ -1,0 +1,19 @@
+.dashboard {
+    margin-top: 6rem;
+    width: 127rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.cards {
+    &:hover {
+        color: #fff;
+        border-color: #fc00ff;
+        background: linear-gradient(45deg, #00dbde, #fc00ff);
+    }
+}

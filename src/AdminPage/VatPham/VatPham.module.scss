@@ -1,0 +1,28 @@
+.table_container {
+    height: 50rem;
+    width: 126rem;
+    margin-left: 0.8rem;
+}
+
+.title {
+    font-size: 3.2rem;
+    margin-left: 35%;
+    margin-top: 9rem;
+}
+
+.actions {
+    margin-top: -5rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.btn_action {
+    width: 10rem;
+    height: 4rem;
+    font-size: 1.6rem !important;
+    text-transform: capitalize !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

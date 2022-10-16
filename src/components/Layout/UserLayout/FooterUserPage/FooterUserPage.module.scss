@@ -1,0 +1,56 @@
+.footer {
+    background-color: #222;
+}
+
+.footer_container {
+    height: 40rem;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.title {
+    font-size: 1.5rem;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.ul {
+    padding: 0 0;
+}
+
+.li {
+    color: #b2b2b2;
+    list-style-type: none;
+    margin: 0.8rem 0;
+
+    &:hover {
+        cursor: pointer;
+        color: #717fe0;
+    }
+}
+
+.span_contacts {
+    display: inline-flex;
+    align-items: center;
+}
+
+.input_border {
+    border-bottom: 2px solid rgba(204, 204, 204, 0.1);
+    padding-bottom: 4px;
+    color: #666666;
+}
+
+.input_area {
+    width: 28.8rem;
+    height: 8.8rem;
+}
+
+.copyright {
+    color: #b2b2b2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 0.8rem;
+}

@@ -1,0 +1,76 @@
+.login {
+    width: 680px;
+    background: #fff;
+    border-radius: 10px;
+    position: relative;
+    padding: 6.2rem 11rem 3.3rem 11rem;
+}
+
+.login_form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.login_title {
+    font-family: Montserrat-Medium;
+    font-size: 39px;
+    color: #555;
+    line-height: 1.2;
+    text-align: center;
+    padding-bottom: 53px;
+}
+
+.sign_in_media {
+    width: 46rem;
+    display: inline-flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.btn_sign_in {
+    width: 22rem;
+    height: 7rem;
+    border-radius: 1.2rem;
+    font-size: 2rem !important;
+    text-transform: capitalize !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+    &:hover {
+        color: #fff;
+        border-color: #fc00ff;
+        background: linear-gradient(45deg, #00dbde, #fc00ff);
+    }
+}
+
+.info_login {
+    margin-top: 24px;
+    height: 30rem;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.forgot_pass {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #999;
+}
+
+.account,
+.password {
+    font-family: Montserrat-SemiBold;
+    font-size: 24px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.sign_up {
+    color: #999;
+    padding-top: 3rem;
+}

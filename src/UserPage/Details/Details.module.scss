@@ -1,0 +1,131 @@
+.itemDetails {
+    margin-top: 7.6rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.imgDetails {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 116.8rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+}
+
+.wrap_img_item {
+    padding-left: 2.5rem;
+    padding-right: 3rem;
+}
+
+.img_item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.imgs {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.img_main {
+    width: 51.2rem;
+    height: 63.4rem;
+    margin-left: 4rem;
+}
+
+.add_cart_item {
+    width: 42rem;
+    height: 63.4rem;
+    padding: 1.5rem 0.5rem;
+}
+
+.name_item {
+    font-weight: 300;
+    font-size: 3rem;
+    line-height: 1.5;
+    padding-bottom: 14px;
+    color: #333;
+}
+
+.price_item {
+    font-weight: 700;
+    font-size: 2.5rem;
+    line-height: 1.388888;
+    padding-bottom: 14px;
+    color: #333;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.script_item {
+    font-weight: 300;
+    margin: 1.2rem 0;
+}
+
+.flex {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    margin: 1.2rem 0;
+}
+
+.flex_center {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 1.2rem 0;
+}
+
+.input_quality {
+    width: 6rem;
+    height: 4.3rem;
+    text-align: center;
+    padding-left: 1.4rem;
+    font-weight: 700;
+}
+
+.details_item {
+    width: 116.8rem;
+}
+
+.related {
+    margin-top: 7rem;
+    width: 100%;
+    height: 66.4rem;
+    padding-top: 4.5rem;
+    padding-bottom: 10.5rem;
+    background-color: #c1d2d2;
+}
+
+.related_item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.h3_related {
+    font-weight: 700;
+    font-size: 4rem;
+    line-height: 1.2;
+    text-align: center;
+    color: #222;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.card {
+    margin: 2rem 2rem;
+    width: 20rem;
+}
