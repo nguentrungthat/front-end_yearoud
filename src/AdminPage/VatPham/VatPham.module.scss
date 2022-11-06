@@ -26,3 +26,25 @@
     align-items: center;
     justify-content: center;
 }
+
+.flex_inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.action_add {
+    width: 30rem;
+    margin-left: 25%;
+}
+
+.title_modal {
+    font-size: 3.2rem;
+    margin-left: 15rem;
+    margin-top: 2rem;
+}
+
+.label {
+    font-size: 2rem;
+    font-weight: 600;
+}

@@ -15,7 +15,7 @@ export default function Login() {
     return (
         <div className={cx(styles.login)}>
             <div className={cx(styles.login_form)}>
-                <span className={cx(styles.login_title)}>Sign In With</span>
+                <span className={cx(styles.login_title)}>Đăng Nhập</span>
                 <div className={cx(styles.sign_in_media)}>
                     <Button className={cx(styles.btn_sign_in)} variant="contained">
                         <FacebookIcon sx={{ fontSize: '30px', mr: '8px' }} />

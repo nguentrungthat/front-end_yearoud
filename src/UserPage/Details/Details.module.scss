@@ -98,6 +98,19 @@
     width: 116.8rem;
 }
 
+.list_ratings {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.list_rating {
+    border: 1px solid #ccc;
+    margin-left: 6rem;
+    margin-bottom: 3rem;
+    width: 20rem;
+}
+
 .related {
     margin-top: 7rem;
     width: 100%;

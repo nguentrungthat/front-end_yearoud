@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 // import images from '../../../../assets/images';
 import styles from './Sidebar.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCubes, faHouse, faShop, faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faCubes, faFileContract, faHouse, faShop, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faShopify } from '@fortawesome/free-brands-svg-icons';
 
 function Sidebar() {
@@ -68,6 +68,13 @@ function Sidebar() {
                     <ListItem button>
                         <FontAwesomeIcon className={cx(styles.icon)} icon={faShopify} />
                         <ListItemText primaryTypographyProps={ListTextStyle} primary="Đơn Mua" />
+                    </ListItem>
+                </Link>
+                <Divider light />
+                <Link className={cx(styles.link)} to={'/admin/'}>
+                    <ListItem button>
+                        <FontAwesomeIcon className={cx(styles.icon)} icon={faFileContract} />
+                        <ListItemText primaryTypographyProps={ListTextStyle} primary="Thống Kê" />
                     </ListItem>
                 </Link>
             </List>

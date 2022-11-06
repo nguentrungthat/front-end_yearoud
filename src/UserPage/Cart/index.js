@@ -13,54 +13,51 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import CardMedia from '@mui/material/CardMedia';
 import styles from './Cart.module.scss';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import SelectBox from '../../components/MiniPart/SelectBox';
+import { useParams } from 'react-router-dom';
 const url = 'http://localhost:8081';
 const ShopCart = require('../../Controller/CartController');
 
 function Cart() {
     const [items, setItems] = useState([]);
-    const [imgItem, setImgItem] = useState([]);
+    const [count, setCount] = useState([]);
+    const [price, setPrice] = useState([]);
+
+    const { id } = useParams();
 
     useEffect(() => {
-        const id = [1, 2];
         async function Get() {
-            setItems(await ShopCart.POST_ITEM(id));
-        }
-        async function GetImg() {
-            return setImgItem(await ShopCart.Images(id));
+            return setItems(await ShopCart.GET_CART(id));
         }
         Get();
-        GetImg();
-    }, []);
+    }, [id]);
 
-    let price = [];
-    let count = [];
-    let i = 0;
-    count[0] = useState(1);
-    price[0] = useState(99000);
-    count[1] = useState(1);
-    price[1] = useState(65000);
+    useMemo(() => {
+        let i = 0;
+        let totalPrice = [];
+        let countSOLUONG = [];
+        for (const item of items) {
+            countSOLUONG[i] = item.SOLUONG;
+            totalPrice[i] = item.SOLUONG * item.GIABAN;
+            i++;
+        }
+        setCount(countSOLUONG);
+        setPrice(totalPrice);
+    }, [items]);
 
-    let totalprice = [];
-    let settotalprice = [];
-    let countItem = [];
-    let setcountItem = [];
-
-    for (const item of items) {
-        item.index = i;
-        countItem[i] = count[i][0];
-        setcountItem[i] = count[i][1];
-        totalprice[i] = price[i][0];
-        settotalprice[i] = price[i][1];
-        item.IMG = imgItem[i]?.TEN_HINHANH ? imgItem[i]?.TEN_HINHANH : 'logo2.png';
-        i++;
-    }
-
-    const city = SelectBox('Tỉnh/Thành Phố', ['TP.Cần Thơ', 'TP.Hồ Chí Minh', 'Hà Nội']);
+    const city = SelectBox('Tỉnh/Thành Phố', [
+        { ID: 1, VALUE: 'TP.Cần Thơ' },
+        { ID: 1, VALUE: 'TP.Hồ Chí Minh' },
+        { ID: 1, VALUE: 'Hà Nội' },
+    ]);
     if (!city) {
         return;
     }
+
+    const tongtien = price.reduce((result, prod) => {
+        return result + prod;
+    }, 0);
 
     return (
         <div className={cx(styles.cart_container)}>
@@ -85,7 +82,7 @@ function Cart() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {items.map((item) => (
+                            {items.map((item, index) => (
                                 <TableRow
                                     key={item.ID_VATPHAM}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -112,11 +109,13 @@ function Cart() {
                                     <TableCell align="center">
                                         <IconButton
                                             onClick={() => {
-                                                if (countItem[item.index] > 1) {
-                                                    setcountItem[item.index](countItem[item.index] - 1);
-                                                    settotalprice[item.index](
-                                                        item.GIABAN * (countItem[item.index] - 1),
-                                                    );
+                                                if (count[index] > 1) {
+                                                    let arr = count;
+                                                    let gia = price;
+                                                    arr[index] = count[index] - 1;
+                                                    gia[index] = arr[index] * item.GIABAN;
+                                                    setCount([...arr]);
+                                                    setPrice([...gia]);
                                                 }
                                             }}
                                         >
@@ -126,19 +125,23 @@ function Cart() {
                                             className={cx(styles.input_quality)}
                                             type="number"
                                             readOnly
-                                            value={countItem[item.index]}
+                                            value={count[index]}
                                         ></input>
                                         <IconButton
                                             onClick={() => {
-                                                setcountItem[item.index](countItem[item.index] + 1);
-                                                settotalprice[item.index](item.GIABAN * (countItem[item.index] + 1));
+                                                let arr = count;
+                                                let gia = price;
+                                                arr[index] = count[index] + 1;
+                                                gia[index] = arr[index] * item.GIABAN;
+                                                setCount([...arr]);
+                                                setPrice([...gia]);
                                             }}
                                         >
                                             <AddIcon sx={{ width: '3rem', height: '3rem' }} />
                                         </IconButton>
                                     </TableCell>
                                     <TableCell sx={{ fontSize: 16 }} align="right">
-                                        {totalprice[item.index]}
+                                        {price[index]}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -163,7 +166,7 @@ function Cart() {
                 <h4 className={cx(styles.h4_payment)}>Tổng đơn hàng</h4>
                 <div className={cx(styles.subtotal_payment)}>
                     <span className={cx(styles.label)}>Tạm tính:</span>
-                    <span className={cx(styles.subtotal)}>0</span>
+                    <span className={cx(styles.label)}> {tongtien} đ</span>
                 </div>
                 <span className={cx(styles.label)}>Vận chuyển:</span>
                 <div className={cx(styles.shipping_payment)}>
@@ -183,7 +186,7 @@ function Cart() {
                 </div>
                 <div className={cx(styles.total)}>
                     <span className={cx(styles.label)}>Tổng tiền:</span>
-                    <span className={cx(styles.total_value)}>0</span>
+                    <span className={cx(styles.total_value)}> {tongtien} đ</span>
                 </div>
             </div>
         </div>

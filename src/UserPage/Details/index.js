@@ -40,8 +40,9 @@ function ItemDetails() {
     const [dis, setDis] = useState(false);
     const [rating, setRating] = useState([]);
     const [ratings, setRatings] = useState([]);
+    const [listRatings, setListRatings] = useState([]);
 
-    const { idItem } = useParams();
+    const { id, idItem } = useParams();
 
     useEffect(() => {
         async function Get() {
@@ -51,7 +52,7 @@ function ItemDetails() {
             return setImgItem(await Details.Images(idItem));
         }
         async function GetItem() {
-            return setRelateItem(await Items.OnLoad());
+            return setRelateItem(await Items.OnLoad(id));
         }
         async function GetRating() {
             return setRating(await Details.RATING(idItem));
@@ -59,12 +60,16 @@ function ItemDetails() {
         async function GetRatings() {
             return setRatings(await Details.RATING());
         }
+        async function GetListRating() {
+            return setListRatings(await Details.LIST_RATING(idItem));
+        }
         Get();
         GetImg();
         GetItem();
         GetRating();
         GetRatings();
-    }, [idItem]);
+        GetListRating();
+    }, [id, idItem]);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -80,12 +85,6 @@ function ItemDetails() {
         if (count < 2) setDis(true);
     };
 
-    const sxStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontFamily: 'Poppins-Regular',
-    };
     const styleModal = {
         position: 'absolute',
         top: '50%',
@@ -101,8 +100,18 @@ function ItemDetails() {
         pb: 3,
     };
 
-    const size = SelectBox('Size', ['Size S', 'Size M', 'Size L', 'Size XL', 'Size XXL']);
-    const color = SelectBox('Color', ['Trắng', 'Xanh', 'Xám']);
+    const size = SelectBox('Size', [
+        { ID: 'S', VALUE: 'Size S' },
+        { ID: 'M', VALUE: 'Size M' },
+        { ID: 'L', VALUE: 'Size L' },
+        { ID: 'XL', VALUE: 'Size XL' },
+        { ID: 'XXL', VALUE: 'Size XXL' },
+    ]);
+    const color = SelectBox('Color', [
+        { ID: '1', VALUE: 'Trắng' },
+        { ID: '2', VALUE: 'Đen' },
+        { ID: '3', VALUE: 'Xám' },
+    ]);
     if (!size) {
         return;
     }
@@ -124,45 +133,77 @@ function ItemDetails() {
         </Card>
     ));
 
+    const list = listRatings?.map((rate) => (
+        <div className={cx(styles.list_rating)} key={rate.ID_RATING}>
+            {rate.TEN_KHACHHANG}
+            <br />
+            <Rating size="large" key={rate.ID_RATING} defaultValue={rate?.RATING} readOnly />
+        </div>
+    ));
+
     for (var relative of imgRelateItem) {
         var valueRating = 0;
-        var qualityRating = 0;
+        var quantityRating = 0;
         for (var rate of ratings) {
             if (rate.ID_VATPHAM === relative.ID_VATPHAM) {
                 valueRating = rate.RATING;
-                qualityRating = rate.QUALITY;
+                quantityRating = rate.QUANTITY;
             }
         }
         relative.RATING = valueRating;
-        relative.QUALITYRATING = qualityRating;
+        relative.QUANTITYRATING = quantityRating;
     }
 
-    var arrItems = imgRelateItem.map((item, index) => (
-        <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
-            <Card onClick={() => window.scrollTo(0, 0)} className={cx(styles.card)} key={index} sx={{ maxWidth: 345 }}>
-                <CardActionArea>
-                    <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
-                    <CardContent sx={{ height: 118 }}>
-                        <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
-                        <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
-                        <div className={cx(styles.rating)}>
-                            <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
-                        </div>
-                        <i>{item.QUALITYRATING} lượt đánh giá</i>
-                    </CardContent>
-                </CardActionArea>
-            </Card>
-        </Link>
-    ));
+    var arrItems = [];
+    if (id) {
+        arrItems = imgRelateItem.map((item, index) => (
+            <Link className={cx(styles.link)} key={index} to={`/details/${id}/${item.ID_VATPHAM}`}>
+                <Card
+                    onClick={() => window.scrollTo(0, 0)}
+                    className={cx(styles.card)}
+                    key={index}
+                    sx={{ maxWidth: 345 }}
+                >
+                    <CardActionArea>
+                        <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
+                        <CardContent sx={{ height: 118 }}>
+                            <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
+                            <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
+                            <div className={cx(styles.rating)}>
+                                <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
+                            </div>
+                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </Link>
+        ));
+    } else {
+        arrItems = imgRelateItem.map((item, index) => (
+            <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
+                <Card
+                    onClick={() => window.scrollTo(0, 0)}
+                    className={cx(styles.card)}
+                    key={index}
+                    sx={{ maxWidth: 345 }}
+                >
+                    <CardActionArea>
+                        <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
+                        <CardContent sx={{ height: 118 }}>
+                            <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
+                            <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
+                            <div className={cx(styles.rating)}>
+                                <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
+                            </div>
+                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+            </Link>
+        ));
+    }
 
-    var arr = [
-        arrItems[Details.Random(0, 5)],
-        arrItems[Details.Random(5, 10)],
-        arrItems[Details.Random(10, 15)],
-        arrItems[Details.Random(15, 20)],
-        arrItems[Details.Random(20, 25)],
-        arrItems[Details.Random(25, 40)],
-    ];
+    var arr = [arrItems[0], arrItems[1], arrItems[2], arrItems[3], arrItems[4], arrItems[5]];
 
     return (
         <div className={cx(styles.itemDetails)}>
@@ -188,7 +229,7 @@ function ItemDetails() {
                         />
                         ({rating.RATING})
                     </div>
-                    <i>{rating.QUALITY} lượt đánh giá</i>
+                    <i>{rating.QUANTITY} lượt đánh giá</i>
                     <div className={cx(styles.script_item)}>
                         Nulla eget sem vitae eros pharetra viverra. Nam vitae luctus ligula. Mauris consequat ornare
                         feugiat.
@@ -270,7 +311,7 @@ function ItemDetails() {
                                 <Tab
                                     sx={{ fontSize: '1.5rem', fontFamily: 'Poppins-Regular' }}
                                     value="3"
-                                    label="Đánh giá"
+                                    label={`Đánh giá(${rating.QUANTITY})`}
                                 />
                             </TabList>
                         </Box>
@@ -280,8 +321,8 @@ function ItemDetails() {
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
                             Thông tin sản phẩm
                         </TabPanel>
-                        <TabPanel sx={sxStyle} value="3">
-                            Đánh giá
+                        <TabPanel value="3">
+                            <div className={cx(styles.list_ratings)}>{list}</div>
                         </TabPanel>
                     </TabContext>
                 </Box>

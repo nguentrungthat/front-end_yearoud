@@ -6,23 +6,22 @@ import Select from '@mui/material/Select';
 
 export default function SelectBox(str, elm) {
     const [value, setValue] = React.useState('');
+    const [id, setID] = React.useState('');
 
-    const handleChange = (event) => {
+    const handleChange = (event, name) => {
         setValue(event.target.value);
+        setID(name.props.id);
     };
 
     var select = elm.map((value, index) => (
-        <MenuItem sx={{ fontSize: 14, fontFamily: 'Poppins-Regular' }} key={index} value={value}>
-            {value}
+        <MenuItem id={value.ID} sx={{ fontSize: 14, fontFamily: 'Poppins-Regular' }} key={index} value={value.VALUE}>
+            {value.VALUE}
         </MenuItem>
     ));
-
     return (
         <FormControl sx={{ width: 250 }}>
-            <InputLabel sx={{ fontSize: 14, fontFamily: 'Poppins-Regular' }} id="demo-select-small">
-                Chọn {str}
-            </InputLabel>
-            <Select labelId="select" id="select" value={value} label={str} onChange={handleChange}>
+            <InputLabel sx={{ fontSize: 14, fontFamily: 'Poppins-Regular' }}>Chọn {str} *</InputLabel>
+            <Select id={`${id}`} value={value} label={str} onChange={handleChange}>
                 <MenuItem sx={{ fontSize: 14, fontFamily: 'Poppins-Regular' }} value="">
                     <em>None</em>
                 </MenuItem>

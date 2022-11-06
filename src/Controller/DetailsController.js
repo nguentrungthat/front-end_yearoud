@@ -21,8 +21,13 @@ async function RATING(id) {
     }
 }
 
+async function LIST_RATING(id) {
+    const body = await Api.Post('rating/rating', { ID_VATPHAM: id });
+    return body;
+}
+
 function Random(min, max) {
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
-export { Load, Images, Random, RATING };
+export { Load, Images, Random, RATING, LIST_RATING };

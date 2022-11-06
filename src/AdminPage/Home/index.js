@@ -15,7 +15,6 @@ function Home() {
         }
         Get();
     }, []);
-    console.log(dashboards);
     const cards = [
         {
             name: 'Tổng vật phẩm',

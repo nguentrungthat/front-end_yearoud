@@ -1,6 +1,6 @@
 .cart_container {
     min-height: 80rem;
-    margin-top: 7.6rem;
+    margin-top: 5rem;
     display: flex;
     align-items: center;
     justify-content: space-around;
@@ -92,5 +92,12 @@
 }
 
 .total {
+    margin-top: 0.8rem;
     border-top: 1px dashed #d9d9d9;
+}
+
+.total_value {
+    color: #333;
+    font-weight: 500;
+    font-size: 2.5rem;
 }

@@ -17,21 +17,17 @@ const url = 'http://localhost:8081';
 
 function Main() {
     const [items, setItems] = useState([]);
-    const [rating, setRating] = useState([]);
     const [checked, setChecked] = useState([true, true, true, true]);
-
     const { id } = useParams();
 
     useEffect(() => {
         async function Get() {
-            setItems(await Items.OnLoad());
-        }
-        async function GetRating() {
-            setRating(await Items.RATING());
+            if (id) setItems(await Items.OnLoad(id));
+            else setItems(await Items.OnLoad());
         }
         Get();
-        GetRating();
-    }, []);
+    }, [id]);
+
     const handleChange1 = (event) => {
         setChecked([event.target.checked, event.target.checked, event.target.checked, event.target.checked]);
     };
@@ -47,19 +43,6 @@ function Main() {
     const handleChange5 = (event) => {
         setChecked([checked[0], checked[1], checked[2], event.target.checked]);
     };
-
-    for (var item of items) {
-        var value = 0;
-        var qualityRating = 0;
-        for (var rate of rating) {
-            if (rate.ID_VATPHAM === item.ID_VATPHAM) {
-                value = rate.RATING;
-                qualityRating = rate.QUALITY;
-            }
-        }
-        item.RATING = value;
-        item.QUALITYRATING = qualityRating;
-    }
 
     var arr = [];
     if (id) {
@@ -79,7 +62,7 @@ function Main() {
                             <div className={cx(styles.rating)}>
                                 <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
                             </div>
-                            <i>{item.QUALITYRATING} lượt đánh giá</i>
+                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
                         </CardContent>
                     </CardActionArea>
                 </Card>
@@ -102,7 +85,7 @@ function Main() {
                             <div className={cx(styles.rating)}>
                                 <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
                             </div>
-                            <i>{item.QUALITYRATING} lượt đánh giá</i>
+                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
                         </CardContent>
                     </CardActionArea>
                 </Card>

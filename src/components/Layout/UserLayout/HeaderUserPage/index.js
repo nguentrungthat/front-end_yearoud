@@ -13,14 +13,17 @@ import ListItemText from '@mui/material/ListItemText';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
 import images from '../../../../assets/images';
 import styles from './HeaderUserPage.module.scss';
 import { Button } from '@mui/material';
 const Items = require('../../../../Controller/ItemsController');
+const Cart = require('../../../../Controller/CartController');
 
 function Header() {
     const [user, setUser] = useState([]);
     const [open, setOpen] = useState(false);
+    const [cart, setCart] = useState(0);
 
     const { id } = useParams();
     useEffect(() => {
@@ -28,7 +31,11 @@ function Header() {
             async function Get() {
                 return setUser(await Items.USER(id));
             }
+            async function GetCount() {
+                return setCart(await Cart.COUNT_CART(id));
+            }
             Get();
+            GetCount();
         }
     }, [id]);
 
@@ -50,7 +57,7 @@ function Header() {
                     </IconButton>
                     <Link className={cx(styles.link)} to={`/cart/${id}`}>
                         <IconButton onClick={() => window.scrollTo(0, 0)} sx={{ mr: 2 }}>
-                            <Badge badgeContent={2} color="primary">
+                            <Badge badgeContent={cart[0]?.QUANTITY} color="primary">
                                 <ShoppingCartIcon sx={{ fontSize: 24 }} />
                             </Badge>
                         </IconButton>
@@ -110,7 +117,12 @@ function Header() {
             <div className={cx(styles.inner)}>
                 <div className={cx(styles.page_logo)}>
                     <Link className={cx(styles.link)} to={link}>
-                        <img className={cx(styles.brand_logo)} src={images.logo} alt="Yearoud"></img>
+                        <img
+                            onClick={() => window.scrollTo(0, 0)}
+                            className={cx(styles.brand_logo)}
+                            src={images.logo}
+                            alt="Yearoud"
+                        ></img>
                         <span className={cx(styles.brand_mini)}>YR</span>
                     </Link>
                 </div>
@@ -129,6 +141,11 @@ function Header() {
                     </div>
                     {userLogin}
                 </div>
+            </div>
+            <div className={cx(styles.scrollTop)}>
+                <IconButton onClick={() => window.scrollTo(0, 0)}>
+                    <ArrowCircleUpIcon sx={{ fontSize: '5rem' }} />
+                </IconButton>
             </div>
         </header>
     );
