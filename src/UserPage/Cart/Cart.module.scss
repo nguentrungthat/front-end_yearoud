@@ -7,14 +7,14 @@
 }
 
 .cart_details {
-    width: 75rem;
+    width: 90rem;
     min-height: 60rem;
     margin-left: 7.6rem;
 }
 
 .cart_payment {
-    width: 40rem;
-    height: 60rem;
+    width: 35rem;
+    height: 63rem;
     padding: 2rem 4rem 4rem;
     border: 1px solid #eee;
 }
@@ -64,6 +64,7 @@
     justify-content: space-around;
     flex-direction: column;
     height: 30rem;
+    border-bottom: 1px dashed #d9d9d9;
 }
 
 .update_shipping {
@@ -92,12 +93,18 @@
 }
 
 .total {
-    margin-top: 0.8rem;
-    border-top: 1px dashed #d9d9d9;
+    margin-top: 1.2rem;
 }
 
 .total_value {
     color: #333;
     font-weight: 500;
     font-size: 2.5rem;
+}
+
+.thanhtoan {
+    margin-top: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }

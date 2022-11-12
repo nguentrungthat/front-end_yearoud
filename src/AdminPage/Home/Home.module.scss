@@ -1,9 +1,17 @@
-.dashboard {
-    margin-top: 6rem;
+.dashboard_container {
+    margin-top: 8.6rem;
+    margin-left: 24.9rem;
     width: 127rem;
+}
+
+.dashboard {
     display: flex;
     align-items: center;
     justify-content: space-around;
+}
+
+.breadcrumbs {
+    margin-left: 3rem;
 }
 
 .link {
@@ -16,4 +24,25 @@
         border-color: #fc00ff;
         background: linear-gradient(45deg, #00dbde, #fc00ff);
     }
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    text-decoration: underline;
+}
+
+.inline {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.chart {
+    width: 60rem;
+    margin-left: 2rem;
+    margin-bottom: 2rem;
 }

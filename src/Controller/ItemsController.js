@@ -20,7 +20,7 @@ async function GET_ROWS_ITEM() {
         var row = {
             id: item.ID_VATPHAM,
             col1: item.TEN_VATPHAM,
-            col2: item.GIABAN,
+            col2: item.GIABAN.toLocaleString('en-US'),
             col3: item.SOLUONG_TONKHO,
             col4: item.SOLUONG_DABAN,
             col5: item.TEN_STORE,

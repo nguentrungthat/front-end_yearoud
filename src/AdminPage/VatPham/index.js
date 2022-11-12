@@ -11,6 +11,9 @@ import Modal from '@mui/material/Modal';
 import TextField from '@mui/material/TextField';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
 import styles from './VatPham.module.scss';
 import SelectBox from '../../components/MiniPart/SelectBox';
 const Items = require('../../Controller/ItemsController');
@@ -199,6 +202,16 @@ function VatPham() {
 
     return (
         <div className={clsx(styles.table_container)}>
+            <div className={clsx(styles.breadcrumbs)}>
+                <Breadcrumbs sx={{ fontSize: '1.4rem' }}>
+                    <Link underline="hover" color="inherit" href="/admin">
+                        Dashboard
+                    </Link>
+                    <Typography sx={{ fontSize: '1.4rem' }} color="text.primary">
+                        Vật phẩm
+                    </Typography>
+                </Breadcrumbs>
+            </div>
             <div className={clsx(styles.title)}>
                 <p>Danh Sách Vật Phẩm</p>
             </div>

@@ -14,4 +14,25 @@ async function COUNT_CART(id) {
     return body;
 }
 
-export { GET_CART, COUNT_CART };
+async function ADD_TO_CART(body) {
+    return await Api.Post('cart/add', {
+        ID_VATPHAM: body.ID_VATPHAM,
+        SOLUONG: body.SOLUONG,
+        ID_KHACHHANG: body.ID_KHACHHANG,
+    });
+}
+
+async function DELETE_CART(id) {
+    const body = await Api.Post('cart/delete', { ID_CART: id });
+    return body;
+}
+
+async function UPDATE_CART(body) {
+    for (const value of body) {
+        await Api.Post('cart/update', { ID_CART: value.ID_CART, SOLUONG: value.SOLUONG });
+    }
+
+    return;
+}
+
+export { GET_CART, COUNT_CART, ADD_TO_CART, DELETE_CART, UPDATE_CART };

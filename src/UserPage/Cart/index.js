@@ -11,10 +11,14 @@ import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import Checkbox from '@mui/material/Checkbox';
 import CardMedia from '@mui/material/CardMedia';
 import styles from './Cart.module.scss';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, forwardRef } from 'react';
 import SelectBox from '../../components/MiniPart/SelectBox';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { useParams } from 'react-router-dom';
 const url = 'http://localhost:8081';
 const ShopCart = require('../../Controller/CartController');
@@ -23,6 +27,10 @@ function Cart() {
     const [items, setItems] = useState([]);
     const [count, setCount] = useState([]);
     const [price, setPrice] = useState([]);
+    const [check, setCheck] = useState([]);
+    const [checkAll, setCheckAll] = useState(false);
+    const [update, setUpdate] = useState([]);
+    const [openAlert, setOpenAlert] = useState(false);
 
     const { id } = useParams();
 
@@ -37,13 +45,16 @@ function Cart() {
         let i = 0;
         let totalPrice = [];
         let countSOLUONG = [];
+        let checkbox = [];
         for (const item of items) {
             countSOLUONG[i] = item.SOLUONG;
             totalPrice[i] = item.SOLUONG * item.GIABAN;
+            checkbox[i] = false;
             i++;
         }
         setCount(countSOLUONG);
         setPrice(totalPrice);
+        setCheck(checkbox);
     }, [items]);
 
     const city = SelectBox('Tỉnh/Thành Phố', [
@@ -55,17 +66,52 @@ function Cart() {
         return;
     }
 
-    const tongtien = price.reduce((result, prod) => {
-        return result + prod;
-    }, 0);
+    const handleOpenAlert = () => setOpenAlert(true);
+    const handleCloseAlert = () => setOpenAlert(false);
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const alert = (
+        <Snackbar sx={{ width: '30rem' }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+            <Alert
+                onClose={handleCloseAlert}
+                severity="success"
+                sx={{ width: '100%', height: '5rem', fontSize: '1.4rem' }}
+            >
+                Cập Nhật Giỏ Hàng Thành Công
+            </Alert>
+        </Snackbar>
+    );
+
+    let tongtien = 0;
+    for (let i = 0; i < items.length; i++) {
+        if (check[i]) tongtien += price[i];
+    }
 
     return (
         <div className={cx(styles.cart_container)}>
+            {alert}
             <div className={cx(styles.cart_details)}>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }}>
                         <TableHead>
                             <TableRow>
+                                <TableCell sx={{ fontSize: 16 }}>
+                                    <Checkbox
+                                        sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
+                                        checked={checkAll}
+                                        onChange={() => {
+                                            let checkbox = check;
+                                            setCheckAll(!checkAll);
+                                            for (let i = 0; i < items.length; i++) {
+                                                checkbox[i] = !checkAll;
+                                            }
+                                            setCheck([...checkbox]);
+                                        }}
+                                    />{' '}
+                                    Tất cả
+                                </TableCell>
                                 <TableCell sx={{ fontSize: 16 }}></TableCell>
                                 <TableCell sx={{ fontSize: 16 }} align="left">
                                     SẢN PHẨM
@@ -79,19 +125,34 @@ function Cart() {
                                 <TableCell sx={{ fontSize: 16 }} align="right">
                                     THÀNH TIỀN
                                 </TableCell>
+                                <TableCell sx={{ fontSize: 16 }}></TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {items.map((item, index) => (
-                                <TableRow
-                                    key={item.ID_VATPHAM}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
+                                <TableRow key={item.ID_CART} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    <TableCell sx={{ fontSize: 16 }} align="left">
+                                        <Checkbox
+                                            sx={{ '& .MuiSvgIcon-root': { fontSize: 24 } }}
+                                            checked={check[index]}
+                                            onChange={() => {
+                                                let checkbox = check;
+                                                checkbox[index] = !check[index];
+                                                setCheck([...checkbox]);
+                                                let bol = true;
+                                                for (let i = 0; i < items.length; i++) {
+                                                    if (!check[i]) bol = false;
+                                                }
+                                                setCheckAll(bol);
+                                            }}
+                                        />
+                                    </TableCell>
                                     <TableCell
                                         className={cx(styles.img_name_item)}
                                         sx={{ fontSize: 14 }}
                                         component="th"
                                         scope="row"
+                                        align="left"
                                     >
                                         <CardMedia
                                             sx={{ width: 80, height: 80 }}
@@ -116,6 +177,22 @@ function Cart() {
                                                     gia[index] = arr[index] * item.GIABAN;
                                                     setCount([...arr]);
                                                     setPrice([...gia]);
+                                                    let flag = 0;
+                                                    for (let i = 0; i < update.length; i++) {
+                                                        if (update[i].ID_CART === item.ID_CART) {
+                                                            let newUpdate = update;
+                                                            newUpdate[i].SOLUONG = count[index];
+                                                            setUpdate([...newUpdate]);
+                                                            flag = 1;
+                                                        }
+                                                    }
+                                                    if (flag === 0) {
+                                                        let newUpdate = {
+                                                            ID_CART: item.ID_CART,
+                                                            SOLUONG: count[index],
+                                                        };
+                                                        setUpdate(update.concat([newUpdate]));
+                                                    }
                                                 }
                                             }}
                                         >
@@ -135,6 +212,22 @@ function Cart() {
                                                 gia[index] = arr[index] * item.GIABAN;
                                                 setCount([...arr]);
                                                 setPrice([...gia]);
+                                                let flag = 0;
+                                                for (let i = 0; i < update.length; i++) {
+                                                    if (update[i].ID_CART === item.ID_CART) {
+                                                        let newUpdate = update;
+                                                        newUpdate[i].SOLUONG = count[index];
+                                                        setUpdate([...newUpdate]);
+                                                        flag = 1;
+                                                    }
+                                                }
+                                                if (flag === 0) {
+                                                    let newUpdate = {
+                                                        ID_CART: item.ID_CART,
+                                                        SOLUONG: count[index],
+                                                    };
+                                                    setUpdate(update.concat([newUpdate]));
+                                                }
                                             }}
                                         >
                                             <AddIcon sx={{ width: '3rem', height: '3rem' }} />
@@ -142,6 +235,11 @@ function Cart() {
                                     </TableCell>
                                     <TableCell sx={{ fontSize: 16 }} align="right">
                                         {price[index]}
+                                    </TableCell>
+                                    <TableCell sx={{ fontSize: 16 }} align="right">
+                                        <IconButton>
+                                            <DeleteForeverIcon sx={{ width: '2.5rem', height: '2.5rem' }} />
+                                        </IconButton>
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -157,7 +255,14 @@ function Cart() {
                     <Button sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
                         Thêm mã giảm giá
                     </Button>
-                    <Button sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
+                    <Button
+                        onClick={() => {
+                            ShopCart.UPDATE_CART(update);
+                            handleOpenAlert();
+                        }}
+                        sx={{ fontSize: 16, borderRadius: 23 }}
+                        variant="contained"
+                    >
                         Cập nhật giỏ hàng
                     </Button>
                 </div>
@@ -187,6 +292,11 @@ function Cart() {
                 <div className={cx(styles.total)}>
                     <span className={cx(styles.label)}>Tổng tiền:</span>
                     <span className={cx(styles.total_value)}> {tongtien} đ</span>
+                </div>
+                <div className={cx(styles.thanhtoan)}>
+                    <Button sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
+                        Thanh toán
+                    </Button>
                 </div>
             </div>
         </div>

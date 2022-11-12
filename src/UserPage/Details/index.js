@@ -27,6 +27,7 @@ import cx from 'clsx';
 import SelectBox from '../../components/MiniPart/SelectBox';
 const Details = require('../../Controller/DetailsController');
 const Items = require('../../Controller/ItemsController');
+const Cart = require('../../Controller/CartController');
 const url = 'http://localhost:8081';
 
 function ItemDetails() {
@@ -74,7 +75,18 @@ function ItemDetails() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const handleOpen = () => setOpen(true);
+    const handleAddToCart = async () => {
+        if (id) {
+            setOpen(true);
+            const body = {
+                ID_VATPHAM: Number(idItem),
+                SOLUONG: count,
+                ID_KHACHHANG: Number(id),
+            };
+            console.log(body);
+            await Cart.ADD_TO_CART(body);
+        } else window.location.replace('http://localhost:3000/login');
+    };
     const handleClose = () => setOpen(false);
     const handleCountAdd = () => {
         setCount(count + 1);
@@ -83,6 +95,12 @@ function ItemDetails() {
     const handleCountSub = () => {
         if (count > 0) setCount(count - 1);
         if (count < 2) setDis(true);
+    };
+    const handleChangeQuantity = (event) => {
+        const quality = Number(event.target.value);
+        setCount(quality);
+        if (quality > item[0]?.SOLUONG_TONKHO || quality === 0) setDis(true);
+        else setDis(false);
     };
 
     const styleModal = {
@@ -242,14 +260,19 @@ function ItemDetails() {
                         <div className={cx(styles.lable_color)}>Color</div>
                         <div className={cx(styles.select_box)}>{color}</div>
                     </div>
-                    <div className={cx(styles.flex_center)}>
+                    <div className={cx(styles.quantity_option)}>
                         <IconButton onClick={handleCountSub}>
                             <RemoveIcon sx={{ width: '3rem', height: '3rem' }} />
                         </IconButton>
-                        <input className={cx(styles.input_quality)} type="number" readOnly value={count}></input>
+                        <input
+                            className={cx(styles.input_quality)}
+                            onChange={handleChangeQuantity}
+                            value={count}
+                        ></input>
                         <IconButton onClick={handleCountAdd}>
                             <AddIcon sx={{ width: '3rem', height: '3rem' }} />
                         </IconButton>
+                        <i>{item[0]?.SOLUONG_TONKHO} sản phẩm có sẵn</i>
                     </div>
                     <div className={cx(styles.flex)}>
                         <Modal open={open} onClose={handleClose}>
@@ -268,7 +291,7 @@ function ItemDetails() {
                         </Modal>
                         <Button
                             disabled={dis}
-                            onClick={handleOpen}
+                            onClick={handleAddToCart}
                             sx={{ fontSize: 16, borderRadius: 23 }}
                             variant="contained"
                         >

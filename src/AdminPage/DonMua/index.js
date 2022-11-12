@@ -25,8 +25,8 @@ function KhachHang() {
             col2: donmua.TEN_VATPHAM,
             col3: donmua.TEN_STORE,
             col4: donmua.SOLUONGVP,
-            col5: donmua.DONGIAVP,
-            col6: new Date(donmua.NGAYTHANG).toLocaleString('en-GB', { timeZone: 'UTC' }),
+            col5: donmua.DONGIAVP.toLocaleString('en-US'),
+            col6: new Date(donmua.NGAYTHANG).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10),
         };
         rows.push(row);
     }
