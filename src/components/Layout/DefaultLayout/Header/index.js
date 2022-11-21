@@ -60,9 +60,6 @@ function Header() {
                                 </ListItemButton>
                                 <Collapse in={open} timeout="auto" unmountOnExit>
                                     <List component="div" disablePadding>
-                                        <ListItemButton sx={{ pl: 4 }}>
-                                            <ListItemText primary="Thông tin" />
-                                        </ListItemButton>
                                         <ListItemButton
                                             onClick={() => window.location.replace('http://localhost:3000/')}
                                             sx={{ pl: 4 }}

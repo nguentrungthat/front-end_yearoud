@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -18,7 +18,7 @@ const url = 'http://localhost:8081';
 function Main() {
     const [items, setItems] = useState([]);
     const [checked, setChecked] = useState([true, true, true, true]);
-    const { id } = useParams();
+    const id = localStorage.getItem('id');
 
     useEffect(() => {
         async function Get() {
@@ -44,54 +44,23 @@ function Main() {
         setChecked([checked[0], checked[1], checked[2], event.target.checked]);
     };
 
-    var arr = [];
-    if (id) {
-        arr = items.map((item, index) => (
-            <Link className={cx(styles.link)} key={index} to={`/details/${id}/${item.ID_VATPHAM}`}>
-                <Card
-                    onClick={() => window.scrollTo(0, 0)}
-                    className={cx(styles.card)}
-                    key={index}
-                    sx={{ maxWidth: 400 }}
-                >
-                    <CardActionArea>
-                        <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
-                        <CardContent sx={{ height: 118 }}>
-                            <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
-                            <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
-                            <div className={cx(styles.rating)}>
-                                <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
-                            </div>
-                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Link>
-        ));
-    } else {
-        arr = items.map((item, index) => (
-            <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
-                <Card
-                    onClick={() => window.scrollTo(0, 0)}
-                    className={cx(styles.card)}
-                    key={index}
-                    sx={{ maxWidth: 400 }}
-                >
-                    <CardActionArea>
-                        <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
-                        <CardContent sx={{ height: 118 }}>
-                            <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
-                            <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
-                            <div className={cx(styles.rating)}>
-                                <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
-                            </div>
-                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Link>
-        ));
-    }
+    var arr = items.map((item, index) => (
+        <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
+            <Card onClick={() => window.scrollTo(0, 0)} className={cx(styles.card)} key={index} sx={{ maxWidth: 400 }}>
+                <CardActionArea>
+                    <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
+                    <CardContent sx={{ height: 118 }}>
+                        <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
+                        <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
+                        <div className={cx(styles.rating)}>
+                            <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
+                        </div>
+                        <i>{item.QUANTITYRATING} lượt đánh giá</i>
+                    </CardContent>
+                </CardActionArea>
+            </Card>
+        </Link>
+    ));
 
     return (
         <div className={cx(styles.container)}>

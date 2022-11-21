@@ -5,7 +5,8 @@ async function Login(account, password) {
     if (res.ID_ACCOUNT === 1) {
         return window.location.replace('http://localhost:3000/admin');
     } else {
-        return window.location.replace(`http://localhost:3000/${res.ID_KHACHHANG}`);
+        window.localStorage.setItem('id', res.ID_KHACHHANG);
+        return window.location.replace(`http://localhost:3000`);
     }
 }
 

@@ -35,4 +35,12 @@ async function UPDATE_CART(body) {
     return;
 }
 
-export { GET_CART, COUNT_CART, ADD_TO_CART, DELETE_CART, UPDATE_CART };
+async function PRE_PURCHASE(KH, STORE, ITEMS, ADDRESS) {
+    return await Api.GHN_Preview(KH, STORE, ITEMS, ADDRESS);
+}
+
+async function PURCHASE(KH, STORE, ITEMS, ADDRESS) {
+    return await Api.GHN_Create(KH, STORE, ITEMS, ADDRESS);
+}
+
+export { GET_CART, COUNT_CART, ADD_TO_CART, DELETE_CART, UPDATE_CART, PURCHASE, PRE_PURCHASE };

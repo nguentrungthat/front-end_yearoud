@@ -22,15 +22,21 @@ function CuaHang() {
         var row = {
             id: cuahang.ID_STORE,
             col1: cuahang.TEN_STORE,
-            col2: cuahang.DIACHI_STORE,
-            col3: cuahang.LIENLAC,
+            col2: cuahang.SDT,
+            col3: cuahang.ADDRESS,
+            col4: cuahang.WARD,
+            col5: cuahang.DISTRICT,
+            col6: cuahang.PROVINCE,
         };
         rows.push(row);
     }
     var columns = [
-        { field: 'col1', headerName: 'Tên Cửa Hàng', width: 300 },
-        { field: 'col2', headerName: 'Địa Chỉ', width: 250 },
-        { field: 'col3', headerName: 'Liên Lạc', width: 200 },
+        { field: 'col1', headerName: 'Tên Cửa Hàng', width: 220 },
+        { field: 'col2', headerName: 'Số điện thoại', width: 150 },
+        { field: 'col3', headerName: 'Địa chỉ', width: 200 },
+        { field: 'col4', headerName: 'Phường/Xã', width: 200 },
+        { field: 'col5', headerName: 'Quận/Huyện', width: 200 },
+        { field: 'col6', headerName: 'Tỉnh/TP', width: 200 },
     ];
     return (
         <div className={clsx(styles.table_container)}>

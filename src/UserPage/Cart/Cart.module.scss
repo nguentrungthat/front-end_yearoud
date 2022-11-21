@@ -44,18 +44,29 @@
     font-size: 2.4rem;
     text-transform: uppercase;
     font-weight: 700;
+    margin-top: -0.5rem;
 }
 
 .subtotal_payment {
     border-bottom: 1px dashed #d9d9d9;
     padding-bottom: 0.8rem;
     margin-bottom: 0.8rem;
+    margin-top: -1rem;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
 }
 
 .label {
     color: #333;
     font-weight: 500;
+    width: 50%;
     font-size: 1.8rem;
+}
+
+.price {
+    width: 50%;
+    text-align: right;
 }
 
 .shipping_payment {
@@ -63,13 +74,11 @@
     align-items: center;
     justify-content: space-around;
     flex-direction: column;
-    height: 30rem;
+    height: 33rem;
     border-bottom: 1px dashed #d9d9d9;
 }
 
 .update_shipping {
-    margin-left: 50%;
-    transform: translateX(-50%);
     background-color: #e6e6e6;
     border-radius: 23px;
     min-width: 179px;
@@ -100,6 +109,8 @@
     color: #333;
     font-weight: 500;
     font-size: 2.5rem;
+    width: 50%;
+    text-align: right;
 }
 
 .thanhtoan {
@@ -107,4 +118,52 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.flex_inline {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.selectbox {
+    height: 4rem;
+    width: 25rem;
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    padding-left: 0.4rem;
+}
+
+.label_purchase {
+    color: #333;
+    font-weight: 500;
+    width: 50%;
+    font-size: 2.6rem;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+.details_purchase {
+    margin-left: 2rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.3rem;
+}
+
+.btn_purchase {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: right;
+    margin-top: 1.5rem;
+}
+
+.weight_500 {
+    font-weight: 500;
 }

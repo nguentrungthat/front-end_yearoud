@@ -42,34 +42,20 @@ function ItemDetails() {
     const [rating, setRating] = useState([]);
     const [ratings, setRatings] = useState([]);
     const [listRatings, setListRatings] = useState([]);
-
-    const { id, idItem } = useParams();
+    const id = localStorage.getItem('id');
+    const { idItem } = useParams();
 
     useEffect(() => {
         async function Get() {
-            return setItem(await Details.Load(idItem));
-        }
-        async function GetImg() {
-            return setImgItem(await Details.Images(idItem));
-        }
-        async function GetItem() {
-            return setRelateItem(await Items.OnLoad(id));
-        }
-        async function GetRating() {
-            return setRating(await Details.RATING(idItem));
-        }
-        async function GetRatings() {
-            return setRatings(await Details.RATING());
-        }
-        async function GetListRating() {
-            return setListRatings(await Details.LIST_RATING(idItem));
+            setItem(await Details.Load(idItem));
+            setImgItem(await Details.Images(idItem));
+            setRelateItem(await Items.OnLoad(id));
+            setRating(await Details.RATING(idItem));
+            setRatings(await Details.RATING());
+            setListRatings(await Details.LIST_RATING(idItem));
+            return;
         }
         Get();
-        GetImg();
-        GetItem();
-        GetRating();
-        GetRatings();
-        GetListRating();
     }, [id, idItem]);
 
     const handleChange = (event, newValue) => {
@@ -83,7 +69,6 @@ function ItemDetails() {
                 SOLUONG: count,
                 ID_KHACHHANG: Number(id),
             };
-            console.log(body);
             await Cart.ADD_TO_CART(body);
         } else window.location.replace('http://localhost:3000/login');
     };
@@ -91,10 +76,12 @@ function ItemDetails() {
     const handleCountAdd = () => {
         setCount(count + 1);
         if (count >= 0) setDis(false);
+        if (count > item[0]?.SOLUONG_TONKHO - 1) setDis(true);
     };
     const handleCountSub = () => {
         if (count > 0) setCount(count - 1);
         if (count < 2) setDis(true);
+        if (count <= item[0]?.SOLUONG_TONKHO + 1) setDis(false);
     };
     const handleChangeQuantity = (event) => {
         const quality = Number(event.target.value);
@@ -118,19 +105,24 @@ function ItemDetails() {
         pb: 3,
     };
 
-    const size = SelectBox('Size', [
-        { ID: 'S', VALUE: 'Size S' },
-        { ID: 'M', VALUE: 'Size M' },
-        { ID: 'L', VALUE: 'Size L' },
-        { ID: 'XL', VALUE: 'Size XL' },
-        { ID: 'XXL', VALUE: 'Size XXL' },
-    ]);
-    const color = SelectBox('Color', [
-        { ID: '1', VALUE: 'Trắng' },
-        { ID: '2', VALUE: 'Đen' },
-        { ID: '3', VALUE: 'Xám' },
-    ]);
+    let arrSize = [];
+    let arrColor = [];
+    let indexColor = 1;
+    if (item[0]?.SIZE.length > 0 && item[0]?.COLOR.length > 0) {
+        for (let size of item[0].SIZE.split(', ')) {
+            arrSize.push({ ID: size, VALUE: `Size ${size}` });
+        }
+        for (let color of item[0].COLOR.split(', ')) {
+            arrColor.push({ ID: indexColor.toString(), VALUE: `Màu ${color}` });
+            indexColor++;
+        }
+    }
+    const size = SelectBox('Size', arrSize);
+    const color = SelectBox('Color', arrColor);
     if (!size) {
+        return;
+    }
+    if (!color) {
         return;
     }
 
@@ -172,54 +164,29 @@ function ItemDetails() {
         relative.QUANTITYRATING = quantityRating;
     }
 
-    var arrItems = [];
-    if (id) {
-        arrItems = imgRelateItem.map((item, index) => (
-            <Link className={cx(styles.link)} key={index} to={`/details/${id}/${item.ID_VATPHAM}`}>
-                <Card
-                    onClick={() => window.scrollTo(0, 0)}
-                    className={cx(styles.card)}
-                    key={index}
-                    sx={{ maxWidth: 345 }}
-                >
-                    <CardActionArea>
-                        <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
-                        <CardContent sx={{ height: 118 }}>
-                            <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
-                            <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
-                            <div className={cx(styles.rating)}>
-                                <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
-                            </div>
-                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Link>
-        ));
-    } else {
-        arrItems = imgRelateItem.map((item, index) => (
-            <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
-                <Card
-                    onClick={() => window.scrollTo(0, 0)}
-                    className={cx(styles.card)}
-                    key={index}
-                    sx={{ maxWidth: 345 }}
-                >
-                    <CardActionArea>
-                        <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
-                        <CardContent sx={{ height: 118 }}>
-                            <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
-                            <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
-                            <div className={cx(styles.rating)}>
-                                <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
-                            </div>
-                            <i>{item.QUANTITYRATING} lượt đánh giá</i>
-                        </CardContent>
-                    </CardActionArea>
-                </Card>
-            </Link>
-        ));
-    }
+    var arrItems = imgRelateItem.map((item, index) => (
+        <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
+            <Card onClick={() => window.scrollTo(0, 0)} className={cx(styles.card)} key={index} sx={{ maxWidth: 345 }}>
+                <CardActionArea>
+                    <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
+                    <CardContent sx={{ height: 118 }}>
+                        <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
+                        <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
+                        <div className={cx(styles.rating)}>
+                            <Rating
+                                key={`${index} - ${item.ID_VATPHAM}`}
+                                value={item.RATING}
+                                precision={0.1}
+                                readOnly
+                            />
+                            ({item.RATING})
+                        </div>
+                        <i>{item.QUANTITYRATING} lượt đánh giá</i>
+                    </CardContent>
+                </CardActionArea>
+            </Card>
+        </Link>
+    ));
 
     var arr = [arrItems[0], arrItems[1], arrItems[2], arrItems[3], arrItems[4], arrItems[5]];
 
@@ -238,14 +205,8 @@ function ItemDetails() {
                     <div className={cx(styles.name_item)}>{item[0]?.TEN_VATPHAM}</div>
                     <div className={cx(styles.price_item)}>{item[0]?.GIABAN}đ</div>
                     <div className={cx(styles.rating)}>
-                        <Rating
-                            key={rating.ID_VATPHAM}
-                            size="large"
-                            defaultValue={rating?.RATING}
-                            precision={0.1}
-                            readOnly
-                        />
-                        ({rating.RATING})
+                        <Rating key={rating.ID_VATPHAM} size="large" value={rating?.RATING} precision={0.1} readOnly />(
+                        {rating.RATING})
                     </div>
                     <i>{rating.QUANTITY} lượt đánh giá</i>
                     <div className={cx(styles.script_item)}>
@@ -342,7 +303,9 @@ function ItemDetails() {
                             Mô tả sản phẩm
                         </TabPanel>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
-                            Thông tin sản phẩm
+                            - Size vật phẩm:<span className={cx(styles.weight_600)}> {item[0]?.SIZE}</span> <br />- Màu
+                            sắc vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.COLOR}</span> <br />- Xuất
+                            xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span>
                         </TabPanel>
                         <TabPanel value="3">
                             <div className={cx(styles.list_ratings)}>{list}</div>
@@ -351,7 +314,11 @@ function ItemDetails() {
                 </Box>
             </div>
             <div className={cx(styles.related)}>
-                <h3 className={styles.h3_related}>Sản phẩm liên quan</h3>
+                <h3 className={styles.h3_related}>Sản phẩm tương tự</h3>
+                <div className={cx(styles.related_item)}></div>
+            </div>
+            <div className={cx(styles.related)}>
+                <h3 className={styles.h3_related}>Có thể bạn sẽ thích</h3>
                 <div className={cx(styles.related_item)}>{arr}</div>
             </div>
         </div>

@@ -16,27 +16,52 @@ import Checkbox from '@mui/material/Checkbox';
 import CardMedia from '@mui/material/CardMedia';
 import styles from './Cart.module.scss';
 import { useEffect, useState, useMemo, forwardRef } from 'react';
-import SelectBox from '../../components/MiniPart/SelectBox';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import { useParams } from 'react-router-dom';
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
+import {
+    SelectProvince,
+    SelectDistrict,
+    SelectCommune,
+    getCommuneNameWithType,
+    getDistrictNameWithType,
+    getProvinceNameWithType,
+} from 'vn-ad';
 const url = 'http://localhost:8081';
 const ShopCart = require('../../Controller/CartController');
+const Khachhangs = require('../../Controller/KhachHangController');
+const Cuahhangs = require('../../Controller/CuaHangController');
 
 function Cart() {
     const [items, setItems] = useState([]);
+    const [khachhangs, setKhachhangs] = useState([]);
+    const [cuahangs, setCuahhangs] = useState([]);
     const [count, setCount] = useState([]);
     const [price, setPrice] = useState([]);
     const [check, setCheck] = useState([]);
     const [checkAll, setCheckAll] = useState(false);
     const [update, setUpdate] = useState([]);
     const [openAlert, setOpenAlert] = useState(false);
+    const [openRemove, setOpenRemove] = useState(false);
+    const [openPurchase, setOpenPurchase] = useState(false);
+    const [delID, setDelID] = useState(0);
+    const [tinh, setTinh] = useState('');
+    const [huyen, setHuyen] = useState('');
+    const [xa, setXa] = useState('');
+    const [address, setAddress] = useState('');
+    const [diachi, setDiachi] = useState({});
+    const [tongtien, setTongtien] = useState(0);
+    const [fee, setFee] = useState(0);
 
-    const { id } = useParams();
+    const id = localStorage.getItem('id');
 
     useEffect(() => {
         async function Get() {
-            return setItems(await ShopCart.GET_CART(id));
+            setKhachhangs(await Khachhangs.GET_KH(id));
+            setCuahhangs(await Cuahhangs.GET());
+            setItems(await ShopCart.GET_CART(id));
+            return;
         }
         Get();
     }, [id]);
@@ -50,6 +75,7 @@ function Cart() {
             countSOLUONG[i] = item.SOLUONG;
             totalPrice[i] = item.SOLUONG * item.GIABAN;
             checkbox[i] = false;
+            item.index = i;
             i++;
         }
         setCount(countSOLUONG);
@@ -57,20 +83,43 @@ function Cart() {
         setCheck(checkbox);
     }, [items]);
 
-    const city = SelectBox('Tỉnh/Thành Phố', [
-        { ID: 1, VALUE: 'TP.Cần Thơ' },
-        { ID: 1, VALUE: 'TP.Hồ Chí Minh' },
-        { ID: 1, VALUE: 'Hà Nội' },
-    ]);
-    if (!city) {
-        return;
-    }
-
+    const handleCloseRemove = () => setOpenRemove(false);
+    const handleShowRemove = () => setOpenRemove(true);
+    const handleClosePurchase = () => setOpenPurchase(false);
+    const handleShowPurchase = () => setOpenPurchase(true);
     const handleOpenAlert = () => setOpenAlert(true);
     const handleCloseAlert = () => setOpenAlert(false);
+    const handleAddress = async () => {
+        const ADDRESS = {
+            ADDRESS: address,
+            XA: getCommuneNameWithType(xa),
+            HUYEN: getDistrictNameWithType(huyen),
+            TINH: getProvinceNameWithType(tinh),
+            TOTAL: tien_tamtinh,
+        };
+        setDiachi(ADDRESS);
+        const body = await ShopCart.PRE_PURCHASE(khachhangs[0], cuahangs[0], arrItems, ADDRESS);
+        console.log(body);
+        setFee(body.data.total_fee);
+        setTongtien(tien_tamtinh + body.data.total_fee);
+    };
+
     const Alert = forwardRef(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
+
+    const styleModal = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+    };
 
     const alert = (
         <Snackbar sx={{ width: '30rem' }} open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
@@ -84,14 +133,17 @@ function Cart() {
         </Snackbar>
     );
 
-    let tongtien = 0;
+    let tien_tamtinh = 0;
+    let arrItems = [];
     for (let i = 0; i < items.length; i++) {
-        if (check[i]) tongtien += price[i];
+        if (check[i]) {
+            tien_tamtinh += price[i];
+            arrItems.push(items[i]);
+        }
     }
 
     return (
         <div className={cx(styles.cart_container)}>
-            {alert}
             <div className={cx(styles.cart_details)}>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }}>
@@ -237,7 +289,12 @@ function Cart() {
                                         {price[index]}
                                     </TableCell>
                                     <TableCell sx={{ fontSize: 16 }} align="right">
-                                        <IconButton>
+                                        <IconButton
+                                            onClick={() => {
+                                                setDelID(index);
+                                                handleShowRemove();
+                                            }}
+                                        >
                                             <DeleteForeverIcon sx={{ width: '2.5rem', height: '2.5rem' }} />
                                         </IconButton>
                                     </TableCell>
@@ -251,6 +308,7 @@ function Cart() {
                         sx={{ width: 220, fontSize: 16, borderRadius: 23 }}
                         label="Mã giảm giá"
                         variant="outlined"
+                        inputProps={{ style: { fontSize: '1.6rem' } }}
                     />
                     <Button sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
                         Thêm mã giảm giá
@@ -269,36 +327,187 @@ function Cart() {
             </div>
             <div className={cx(styles.cart_payment)}>
                 <h4 className={cx(styles.h4_payment)}>Tổng đơn hàng</h4>
-                <div className={cx(styles.subtotal_payment)}>
-                    <span className={cx(styles.label)}>Tạm tính:</span>
-                    <span className={cx(styles.label)}> {tongtien} đ</span>
-                </div>
+
                 <span className={cx(styles.label)}>Vận chuyển:</span>
                 <div className={cx(styles.shipping_payment)}>
-                    {city}
-                    <TextField
-                        sx={{ width: 250, fontSize: 16, borderRadius: 23 }}
-                        label="Quận/Huyện"
-                        variant="outlined"
+                    <SelectProvince className={cx(styles.selectbox)} value={tinh} onChange={setTinh} />
+                    <SelectDistrict
+                        className={cx(styles.selectbox)}
+                        value={huyen}
+                        province={tinh}
+                        onChange={setHuyen}
                     />
+                    <SelectCommune className={cx(styles.selectbox)} value={xa} district={huyen} onChange={setXa} />
                     <TextField
-                        sx={{ width: 250, fontSize: 16, borderRadius: 23 }}
-                        label="Xã/Phường"
-                        variant="outlined"
+                        className={cx(styles.textfield)}
+                        label="Địa chỉ cụ thể"
+                        rows={3}
+                        multiline
+                        variant="filled"
+                        value={address}
+                        onChange={(event) => setAddress(event.target.value)}
+                        inputProps={{ style: { width: '23rem', fontSize: '1.6rem' } }}
+                        InputLabelProps={{ style: { fontSize: '1.6rem' } }}
                     />
-                    <TextField sx={{ width: 250, fontSize: 16, borderRadius: 23 }} label="Đường" variant="outlined" />
-                    <button className={cx(styles.update_shipping)}>Cập nhật</button>
+                    <button onClick={handleAddress} className={cx(styles.update_shipping)}>
+                        Cập nhật
+                    </button>
                 </div>
                 <div className={cx(styles.total)}>
-                    <span className={cx(styles.label)}>Tổng tiền:</span>
-                    <span className={cx(styles.total_value)}> {tongtien} đ</span>
+                    <div className={cx(styles.subtotal_payment)}>
+                        <div className={cx(styles.flex_inline)}>
+                            <span className={cx(styles.label)}>Tạm tính:</span>
+                            <span className={cx(styles.price)}> {tien_tamtinh} đ</span>
+                        </div>
+                        <div className={cx(styles.flex_inline)}>
+                            <span className={cx(styles.label)}>Phí vận chuyển:</span>
+                            <span className={cx(styles.price)}> {fee} đ</span>
+                        </div>
+                    </div>
+                    <div className={cx(styles.flex_inline)}>
+                        <span className={cx(styles.label)}>Tổng tiền:</span>
+                        <span className={cx(styles.total_value)}> {tongtien} đ</span>
+                    </div>
                 </div>
                 <div className={cx(styles.thanhtoan)}>
-                    <Button sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
+                    <Button onClick={handleShowPurchase} sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
                         Thanh toán
                     </Button>
                 </div>
             </div>
+            {alert}
+            <Modal open={openRemove} onClose={handleCloseRemove}>
+                <Box className={cx(styles.flex)} sx={{ ...styleModal, width: 478 }}>
+                    <p>Xóa vật phẩm khỏi giỏ hàng:</p>
+                    <h2 className={cx(styles.flex_inline)}>{items[delID]?.TEN_VATPHAM}</h2>
+                    <div className={cx(styles.flex_inline)}>
+                        <Button onClick={handleCloseRemove} sx={{ fontSize: 16, borderRadius: 23 }} variant="outlined">
+                            Close
+                        </Button>
+                        <Button
+                            onClick={() => {
+                                ShopCart.DELETE_CART(items[delID]?.ID_CART);
+                                let newItems = items;
+                                newItems.splice(delID, 1);
+                                setItems([...newItems]);
+                                handleCloseRemove();
+                            }}
+                            sx={{ fontSize: 16, borderRadius: 23 }}
+                            variant="outlined"
+                        >
+                            Xác nhận
+                        </Button>
+                    </div>
+                </Box>
+            </Modal>
+            <Modal open={openPurchase} onClose={handleClosePurchase}>
+                <Box className={cx(styles.flex)} sx={{ ...styleModal, width: '50%' }}>
+                    <span className={cx(styles.label_purchase)}>Chi tiết đơn hàng</span>
+                    <span className={cx(styles.label)}>Thông tin đơn hàng: </span>
+                    <span className={cx(styles.details_purchase)}>- Họ tên: {khachhangs[0]?.TEN_KHACHHANG}</span>
+                    <span className={cx(styles.details_purchase)}>- Số điện thoại: {khachhangs[0]?.SDT}</span>
+                    <span className={cx(styles.details_purchase)}>- Email: {khachhangs[0]?.EMAIL}</span>
+                    <span className={cx(styles.details_purchase)}>
+                        - Địa chỉ giao hàng:{' '}
+                        <span className={cx(styles.weight_500)}>
+                            {diachi?.ADDRESS}, {diachi?.XA}, {diachi?.HUYEN}, {diachi?.TINH}
+                        </span>
+                    </span>
+                    <span className={cx(styles.label)}>Danh sách vật phẩm:</span>
+                    <TableContainer component={Paper}>
+                        <Table size="small" sx={{ minWidth: 650, border: '1px solid #ccc' }}>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ fontSize: 18, borderRight: '1px solid #ccc' }} align="left">
+                                        Tên sản phẩm
+                                    </TableCell>
+                                    <TableCell sx={{ fontSize: 18, borderRight: '1px solid #ccc' }} align="right">
+                                        Giá
+                                    </TableCell>
+                                    <TableCell sx={{ fontSize: 18, borderRight: '1px solid #ccc' }} align="right">
+                                        Số lượng
+                                    </TableCell>
+                                    <TableCell sx={{ fontSize: 18 }} align="right">
+                                        Thành tiền
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {arrItems.map((item) => (
+                                    <TableRow
+                                        key={item.ID_CART}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell sx={{ fontSize: 16, borderRight: '1px solid #ccc' }} align="left">
+                                            {item.TEN_VATPHAM}
+                                        </TableCell>
+                                        <TableCell sx={{ fontSize: 16, borderRight: '1px solid #ccc' }} align="right">
+                                            {item.GIABAN}
+                                        </TableCell>
+                                        <TableCell sx={{ fontSize: 16, borderRight: '1px solid #ccc' }} align="right">
+                                            {count[item.index]}
+                                        </TableCell>
+                                        <TableCell sx={{ fontSize: 16 }} align="right">
+                                            {count[item.index] * item.GIABAN}
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                                <TableRow>
+                                    <TableCell sx={{ fontSize: 12 }} align="left">
+                                        Tổng
+                                    </TableCell>
+                                    <TableCell sx={{ fontSize: 12 }} align="right" />
+                                    <TableCell sx={{ fontSize: 12 }} align="right" />
+                                    <TableCell sx={{ fontSize: 16, fontWeight: 500 }} align="right">
+                                        {tien_tamtinh}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontSize: 12 }} align="left">
+                                        Phí vận chuyển
+                                    </TableCell>
+
+                                    <TableCell sx={{ fontSize: 12 }} align="right" />
+                                    <TableCell sx={{ fontSize: 12 }} align="right" />
+                                    <TableCell sx={{ fontSize: 16, fontWeight: 500 }} align="right">
+                                        {fee}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontSize: 12 }} align="left">
+                                        Coupon
+                                    </TableCell>
+
+                                    <TableCell sx={{ fontSize: 12 }} align="right" />
+                                    <TableCell sx={{ fontSize: 12 }} align="right" />
+                                    <TableCell sx={{ fontSize: 16, fontWeight: 500 }} align="right">
+                                        - 0
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableCell sx={{ fontSize: 18, fontWeight: 500 }} align="left">
+                                        Thành tiền
+                                    </TableCell>
+
+                                    <TableCell sx={{ fontSize: 16 }} align="right" />
+                                    <TableCell sx={{ fontSize: 16 }} align="right" />
+                                    <TableCell sx={{ fontSize: 18, fontWeight: 500 }} align="right">
+                                        {tien_tamtinh + fee}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <div className={cx(styles.btn_purchase)}>
+                        <Button onClick={handleClosePurchase} sx={{ fontSize: 16 }} variant="contained">
+                            Xác nhận
+                        </Button>
+                        <Button onClick={handleClosePurchase} sx={{ fontSize: 16, ml: '2rem' }} variant="outlined">
+                            Close
+                        </Button>
+                    </div>
+                </Box>
+            </Modal>
         </div>
     );
 }

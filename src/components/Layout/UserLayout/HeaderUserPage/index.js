@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import cx from 'clsx';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faCircleXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import IconButton from '@mui/material/IconButton';
@@ -25,7 +25,7 @@ function Header() {
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(0);
 
-    const { id } = useParams();
+    const id = localStorage.getItem('id');
     useEffect(() => {
         if (id) {
             async function Get() {
@@ -46,7 +46,6 @@ function Header() {
     var userLogin = null;
     var link = '/';
     if (id) {
-        link = `/${id}`;
         userLogin = (
             <div className={cx(styles.options)}>
                 <div className={cx(styles.options_btn)}>
@@ -55,7 +54,7 @@ function Header() {
                             <FavoriteIcon sx={{ fontSize: 24 }} />
                         </Badge>
                     </IconButton>
-                    <Link className={cx(styles.link)} to={`/cart/${id}`}>
+                    <Link className={cx(styles.link)} to={`/cart`}>
                         <IconButton onClick={() => window.scrollTo(0, 0)} sx={{ mr: 2 }}>
                             <Badge badgeContent={cart[0]?.QUANTITY} color="primary">
                                 <ShoppingCartIcon sx={{ fontSize: 24 }} />
@@ -83,11 +82,27 @@ function Header() {
                         </ListItemButton>
                         <Collapse in={open} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
-                                <ListItemButton sx={{ pl: 4 }}>
+                                <ListItemButton
+                                    onClick={() => {
+                                        window.location.replace('http://localhost:3000/user');
+                                    }}
+                                    sx={{ pl: 4 }}
+                                >
                                     <ListItemText primary="Thông tin" />
                                 </ListItemButton>
                                 <ListItemButton
-                                    onClick={() => window.location.replace('http://localhost:3000/')}
+                                    onClick={() => {
+                                        window.location.replace('http://localhost:3000/user/purchase');
+                                    }}
+                                    sx={{ pl: 4 }}
+                                >
+                                    <ListItemText primary="Đơn mua" />
+                                </ListItemButton>
+                                <ListItemButton
+                                    onClick={() => {
+                                        localStorage.removeItem('id');
+                                        window.location.replace('http://localhost:3000/');
+                                    }}
                                     sx={{ pl: 4 }}
                                 >
                                     <ListItemText primary="Đăng xuất" />

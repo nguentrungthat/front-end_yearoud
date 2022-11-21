@@ -9,14 +9,19 @@ import Home from '../UserPage/Main/index';
 import Details from '../UserPage/Details/index';
 import Cart from '../UserPage/Cart/index';
 import LoginForm from '../UserPage/Login/index';
+import Information from '../components/Layout/InforLayout/index';
+import Infor from '../UserPage/Information/index';
+import ChangPass from '../UserPage/Information/ChangePass';
+import Purchase from '../UserPage/Information/Purchase';
 
 const publicRoutes = [
     { path: '/', component: Home, layout: User },
-    { path: '/:id', component: Home, layout: User },
     { path: '/login', component: LoginForm, layout: Login },
     { path: '/details/:idItem', component: Details, layout: User },
-    { path: '/details/:id/:idItem', component: Details, layout: User },
-    { path: '/cart/:id', component: Cart, layout: User },
+    { path: '/cart', component: Cart, layout: User },
+    { path: '/user', component: Infor, layout: Information },
+    { path: '/user/pass', component: ChangPass, layout: Information },
+    { path: '/user/purchase', component: Purchase, layout: Information },
     { path: '/admin', component: Admin },
     { path: '/admin/VatPham', component: VatPham },
     { path: '/admin/KhachHang', component: KhachHang },
