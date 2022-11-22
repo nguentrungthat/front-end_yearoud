@@ -15,6 +15,8 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
@@ -42,6 +44,11 @@ function ItemDetails() {
     const [rating, setRating] = useState([]);
     const [ratings, setRatings] = useState([]);
     const [listRatings, setListRatings] = useState([]);
+    const [listItemLoai, setListItemLoai] = useState([]);
+    const [cart, setCart] = useState(0);
+    const [indexLoai, setIndexLoai] = useState(0);
+    const [indexRelate, setIndexRelate] = useState(0);
+
     const id = localStorage.getItem('id');
     const { idItem } = useParams();
 
@@ -53,6 +60,8 @@ function ItemDetails() {
             setRating(await Details.RATING(idItem));
             setRatings(await Details.RATING());
             setListRatings(await Details.LIST_RATING(idItem));
+            setCart(await Cart.COUNT_CART(id));
+            setListItemLoai(await Details.ITEM_BYLOAI(idItem));
             return;
         }
         Get();
@@ -68,8 +77,10 @@ function ItemDetails() {
                 ID_VATPHAM: Number(idItem),
                 SOLUONG: count,
                 ID_KHACHHANG: Number(id),
+                GHICHU: `Phân loại hàng: ${size.props.children[1].props.id}, ${color.props.children[1].props.id}`,
             };
             await Cart.ADD_TO_CART(body);
+            window.localStorage.setItem('quantityCart', cart[0]?.QUANTITY + 1);
         } else window.location.replace('http://localhost:3000/login');
     };
     const handleClose = () => setOpen(false);
@@ -89,6 +100,22 @@ function ItemDetails() {
         if (quality > item[0]?.SOLUONG_TONKHO || quality === 0) setDis(true);
         else setDis(false);
     };
+    const handleRightLoai = () => {
+        if (indexLoai <= listItemLoai.length - 7) return setIndexLoai(indexLoai + 6);
+        return setIndexLoai(0);
+    };
+    const handleLeftLoai = () => {
+        if (indexLoai > 5) return setIndexLoai(indexLoai - 6);
+        return setIndexLoai(listItemLoai.length - 7);
+    };
+    const handleRightRelate = () => {
+        if (indexRelate <= imgRelateItem.length - 7) return setIndexRelate(indexRelate + 6);
+        return setIndexRelate(0);
+    };
+    const handleLeftRelate = () => {
+        if (indexRelate > 5) return setIndexRelate(indexRelate - 6);
+        return setIndexLoai(imgRelateItem.length - 7);
+    };
 
     const styleModal = {
         position: 'absolute',
@@ -107,14 +134,12 @@ function ItemDetails() {
 
     let arrSize = [];
     let arrColor = [];
-    let indexColor = 1;
     if (item[0]?.SIZE.length > 0 && item[0]?.COLOR.length > 0) {
         for (let size of item[0].SIZE.split(', ')) {
             arrSize.push({ ID: size, VALUE: `Size ${size}` });
         }
         for (let color of item[0].COLOR.split(', ')) {
-            arrColor.push({ ID: indexColor.toString(), VALUE: `Màu ${color}` });
-            indexColor++;
+            arrColor.push({ ID: color, VALUE: `Màu ${color}` });
         }
     }
     const size = SelectBox('Size', arrSize);
@@ -142,7 +167,7 @@ function ItemDetails() {
             </CardActionArea>
         </Card>
     ));
-
+    //Đánh giá của vật phẩm
     const list = listRatings?.map((rate) => (
         <div className={cx(styles.list_rating)} key={rate.ID_RATING}>
             {rate.TEN_KHACHHANG}
@@ -188,7 +213,46 @@ function ItemDetails() {
         </Link>
     ));
 
-    var arr = [arrItems[0], arrItems[1], arrItems[2], arrItems[3], arrItems[4], arrItems[5]];
+    const arrItemLoai = listItemLoai.map((item, index) => (
+        <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
+            <Card onClick={() => window.scrollTo(0, 0)} className={cx(styles.card)} key={index} sx={{ maxWidth: 345 }}>
+                <CardActionArea>
+                    <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
+                    <CardContent sx={{ height: 118 }}>
+                        <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
+                        <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
+                        <div className={cx(styles.rating)}>
+                            <Rating
+                                key={`${index} - ${item.ID_VATPHAM}`}
+                                value={item.RATING}
+                                precision={0.1}
+                                readOnly
+                            />
+                            ({item.RATING})
+                        </div>
+                        <i>{item.QUANTITYRATING} lượt đánh giá</i>
+                    </CardContent>
+                </CardActionArea>
+            </Card>
+        </Link>
+    ));
+
+    const arrLoai = [
+        arrItemLoai[indexLoai],
+        arrItemLoai[indexLoai + 1],
+        arrItemLoai[indexLoai + 2],
+        arrItemLoai[indexLoai + 3],
+        arrItemLoai[indexLoai + 4],
+        arrItemLoai[indexLoai + 5],
+    ];
+    var arr = [
+        arrItems[indexRelate],
+        arrItems[indexRelate + 1],
+        arrItems[indexRelate + 2],
+        arrItems[indexRelate + 3],
+        arrItems[indexRelate + 4],
+        arrItems[indexRelate + 5],
+    ];
 
     return (
         <div className={cx(styles.itemDetails)}>
@@ -206,7 +270,7 @@ function ItemDetails() {
                     <div className={cx(styles.price_item)}>{item[0]?.GIABAN}đ</div>
                     <div className={cx(styles.rating)}>
                         <Rating key={rating.ID_VATPHAM} size="large" value={rating?.RATING} precision={0.1} readOnly />(
-                        {rating.RATING})
+                        {rating.RATING ? rating.RATING : 0})
                     </div>
                     <i>{rating.QUANTITY} lượt đánh giá</i>
                     <div className={cx(styles.script_item)}>
@@ -240,9 +304,16 @@ function ItemDetails() {
                             <Box sx={{ ...styleModal, width: 478 }}>
                                 <TaskAltIcon sx={{ fontSize: 80 }} color="success" />
                                 <h2>{item[0]?.TEN_VATPHAM}</h2>
-                                <p>is added to cart.</p>
+                                <p>
+                                    Phân loại hàng: {size.props.children[1].props.id},{' '}
+                                    {color.props.children[1].props.id}
+                                </p>
+                                <p>Đã được thêm vào giỏ hàng.</p>
                                 <Button
-                                    onClick={handleClose}
+                                    onClick={() => {
+                                        handleClose();
+                                        // window.location.replace(`http://localhost:3000/details/${idItem}`);
+                                    }}
                                     sx={{ fontSize: 16, borderRadius: 23 }}
                                     variant="outlined"
                                 >
@@ -315,11 +386,27 @@ function ItemDetails() {
             </div>
             <div className={cx(styles.related)}>
                 <h3 className={styles.h3_related}>Sản phẩm tương tự</h3>
-                <div className={cx(styles.related_item)}></div>
+                <div className={cx(styles.related_item)}>
+                    <IconButton onClick={handleLeftLoai}>
+                        <ArrowCircleLeftIcon sx={{ width: '4rem', height: '4rem' }} />
+                    </IconButton>
+                    {arrLoai}
+                    <IconButton onClick={handleRightLoai}>
+                        <ArrowCircleRightIcon sx={{ width: '4rem', height: '4rem' }} />
+                    </IconButton>
+                </div>
             </div>
             <div className={cx(styles.related)}>
                 <h3 className={styles.h3_related}>Có thể bạn sẽ thích</h3>
-                <div className={cx(styles.related_item)}>{arr}</div>
+                <div className={cx(styles.related_item)}>
+                    <IconButton onClick={handleLeftRelate}>
+                        <ArrowCircleLeftIcon sx={{ width: '4rem', height: '4rem' }} />
+                    </IconButton>
+                    {arr}
+                    <IconButton onClick={handleRightRelate}>
+                        <ArrowCircleRightIcon sx={{ width: '4rem', height: '4rem' }} />
+                    </IconButton>
+                </div>
             </div>
         </div>
     );

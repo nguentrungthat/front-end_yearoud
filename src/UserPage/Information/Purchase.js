@@ -28,6 +28,12 @@ export default function Purchase() {
         setValue(newValue);
     };
 
+    const handleGiao = (value) => {
+        if (new Date().valueOf() < new Date(value[0]?.NGAYGIAO).valueOf()) {
+            return <span className={clsx(styles.status)}>Đang giao</span>;
+        } else return <span className={clsx(styles.status)}>Đã giao</span>;
+    };
+
     const purchases = donmua.map((value, index) => (
         <div key={index} className={clsx(styles.purchase)}>
             <div className={clsx(styles.purchase_header)}>
@@ -38,12 +44,11 @@ export default function Purchase() {
 
                 <div>
                     <span className={clsx(styles.status_label)}>Trạng thái đơn hàng</span>
-                    <span className={clsx(styles.status)}>Đã giao</span>
+                    <span className={clsx(styles.status)}>{handleGiao(value)}</span>
                 </div>
             </div>
             {value.map((data, index) => (
                 <div key={index} className={clsx(styles.purchase_infor)}>
-                    {console.log(data)}
                     <div className={clsx(styles.item_infor)}>
                         <CardMedia
                             sx={{ width: 80, height: 80, mr: '1.2rem' }}
@@ -61,14 +66,24 @@ export default function Purchase() {
                 </div>
             ))}
             <div className={clsx(styles.purchase_total)}>
-                <span className={clsx(styles.total_label)}>Tổng số tiền: </span>
-                <span className={clsx(styles.total_price)}>₫{value[0].TONGTIEN}</span>
+                <div>
+                    <span className={clsx(styles.fee_label)}>Phí vận chuyển: </span>
+                    <span className={clsx(styles.fee_price)}>₫{value[0].FEE}</span>
+                </div>
+                <div>
+                    <span className={clsx(styles.total_label)}>Tổng số tiền: </span>
+                    <span className={clsx(styles.total_price)}>₫{value[0].TONGTIEN + value[0].FEE}</span>
+                </div>
             </div>
             <div className={clsx(styles.purchase_confirm)}>
                 <div className={clsx(styles.date)}>
                     <span>
-                        Nhận sản phẩm và thanh toán trước{' '}
+                        Ngày đặt hàng{' '}
                         <u>{new Date(value[0]?.NGAYTHANG).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10)}</u>
+                    </span>
+                    <span>
+                        Ngày giao hàng{' '}
+                        <u>{new Date(value[0]?.NGAYGIAO).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10)}</u>
                     </span>
                 </div>
                 <div className={clsx(styles.btn_action)}>
@@ -107,10 +122,10 @@ export default function Purchase() {
                             {purchases}
                         </TabPanel>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
-                            Chưa giao
+                            {purchases}
                         </TabPanel>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="3">
-                            Đã giao
+                            {purchases}
                         </TabPanel>
                     </TabContext>
                 </Box>

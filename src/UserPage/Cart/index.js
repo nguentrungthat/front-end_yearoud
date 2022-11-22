@@ -27,6 +27,7 @@ import {
     getCommuneNameWithType,
     getDistrictNameWithType,
     getProvinceNameWithType,
+    getCommunePathWithType,
 } from 'vn-ad';
 const url = 'http://localhost:8081';
 const ShopCart = require('../../Controller/CartController');
@@ -102,6 +103,37 @@ function Cart() {
         console.log(body);
         setFee(body.data.total_fee);
         setTongtien(tien_tamtinh + body.data.total_fee);
+    };
+    const handleAddPurchase = async () => {
+        const ADDRESS = {
+            ADDRESS: address,
+            XA: getCommuneNameWithType(xa),
+            HUYEN: getDistrictNameWithType(huyen),
+            TINH: getProvinceNameWithType(tinh),
+            TOTAL: tien_tamtinh,
+        };
+        setDiachi(ADDRESS);
+        const data = await ShopCart.PURCHASE(khachhangs[0], cuahangs[0], arrItems, ADDRESS);
+        console.log(data);
+        const body = {
+            DCNHAN: address + ', ' + getCommunePathWithType(xa),
+            ID_KHACHHANG: Number(id),
+            FEE: Number(data.data.total_fee),
+            TONGTIEN: Number(tien_tamtinh),
+            NGAYGIAO: data.data.expected_delivery_time.slice(0, 10),
+            VATPHAM: arrItems,
+            ORDER_CODE: data.data.order_code,
+        };
+        await ShopCart.ADD(body);
+        setFee(0);
+        setTongtien(0);
+        handleClosePurchase();
+        for (let idcart of arrItems) {
+            ShopCart.DELETE_CART(idcart.ID_CART);
+            let newItems = items;
+            newItems.splice(delID, 1);
+            setItems([...newItems]);
+        }
     };
 
     const Alert = forwardRef(function Alert(props, ref) {
@@ -214,7 +246,8 @@ function Cart() {
                                         />
                                     </TableCell>
                                     <TableCell sx={{ fontSize: 16 }} align="left">
-                                        {item.TEN_VATPHAM}
+                                        <span>{item.TEN_VATPHAM}</span> <br />{' '}
+                                        <span className={cx(styles.item_note)}>{item.GHICHU}</span>
                                     </TableCell>
                                     <TableCell sx={{ fontSize: 16 }} align="right">
                                         {item.GIABAN}
@@ -346,8 +379,9 @@ function Cart() {
                         variant="filled"
                         value={address}
                         onChange={(event) => setAddress(event.target.value)}
-                        inputProps={{ style: { width: '23rem', fontSize: '1.6rem' } }}
+                        inputProps={{ style: { width: '23rem', fontSize: '1.6rem', paddingTop: '1rem' } }}
                         InputLabelProps={{ style: { fontSize: '1.6rem' } }}
+                        spellCheck={false}
                     />
                     <button onClick={handleAddress} className={cx(styles.update_shipping)}>
                         Cập nhật
@@ -391,6 +425,7 @@ function Cart() {
                                 newItems.splice(delID, 1);
                                 setItems([...newItems]);
                                 handleCloseRemove();
+                                // window.location.replace(`http://localhost:3000/cart`);
                             }}
                             sx={{ fontSize: 16, borderRadius: 23 }}
                             variant="outlined"
@@ -499,7 +534,7 @@ function Cart() {
                         </Table>
                     </TableContainer>
                     <div className={cx(styles.btn_purchase)}>
-                        <Button onClick={handleClosePurchase} sx={{ fontSize: 16 }} variant="contained">
+                        <Button onClick={handleAddPurchase} sx={{ fontSize: 16 }} variant="contained">
                             Xác nhận
                         </Button>
                         <Button onClick={handleClosePurchase} sx={{ fontSize: 16, ml: '2rem' }} variant="outlined">

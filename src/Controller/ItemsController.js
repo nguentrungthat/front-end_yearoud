@@ -8,7 +8,7 @@ async function GET() {
 
 async function GET_LOAI() {
     var body = null;
-    body = await Api.Get('items/loai');
+    body = await Api.Get('items/getloai');
     return body;
 }
 
@@ -174,4 +174,8 @@ async function UPDATE_ITEM(data) {
     return await Api.Post('items/update', data);
 }
 
-export { GET, OnLoad, POST_ITEM, USER, RATING, GET_LOAI, GET_ROWS_ITEM, SAVE };
+async function SEARCH(str) {
+    return await Api.Post('items/search', { SEARCH: str });
+}
+
+export { GET, OnLoad, POST_ITEM, USER, RATING, GET_LOAI, GET_ROWS_ITEM, SAVE, SEARCH };

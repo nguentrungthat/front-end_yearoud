@@ -8,13 +8,13 @@ async function GET() {
 
 async function GET_TOP_VATPHAM() {
     var body = null;
-    body = await Api.Get('items/top');
+    body = await Api.Get('dashboards/topsanpham');
     return body;
 }
 
 async function GET_TOP_DONMUA() {
     var body = null;
-    body = await Api.Get('donmuas/top');
+    body = await Api.Get('dashboards/topdonmua');
     return body;
 }
 

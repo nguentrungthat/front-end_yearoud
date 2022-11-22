@@ -19,6 +19,7 @@ async function ADD_TO_CART(body) {
         ID_VATPHAM: body.ID_VATPHAM,
         SOLUONG: body.SOLUONG,
         ID_KHACHHANG: body.ID_KHACHHANG,
+        GHICHU: body.GHICHU,
     });
 }
 
@@ -43,4 +44,8 @@ async function PURCHASE(KH, STORE, ITEMS, ADDRESS) {
     return await Api.GHN_Create(KH, STORE, ITEMS, ADDRESS);
 }
 
-export { GET_CART, COUNT_CART, ADD_TO_CART, DELETE_CART, UPDATE_CART, PURCHASE, PRE_PURCHASE };
+async function ADD(body) {
+    return await Api.Post('donmuas/add', body);
+}
+
+export { GET_CART, COUNT_CART, ADD_TO_CART, DELETE_CART, UPDATE_CART, PURCHASE, PRE_PURCHASE, ADD };

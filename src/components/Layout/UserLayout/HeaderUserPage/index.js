@@ -24,8 +24,11 @@ function Header() {
     const [user, setUser] = useState([]);
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(0);
+    const [search, setSearch] = useState('');
+    // const [searchItem, setSearchItem] = useState([]);
 
     const id = localStorage.getItem('id');
+
     useEffect(() => {
         if (id) {
             async function Get() {
@@ -41,6 +44,7 @@ function Header() {
 
     const handleClick = () => {
         setOpen(!open);
+        setTimeout(() => setOpen(false), 6000);
     };
 
     var userLogin = null;
@@ -146,11 +150,22 @@ function Header() {
                         <FontAwesomeIcon icon={faBars} />
                     </button>
                     <div className={cx(styles.search_box)}>
-                        <input className={cx(styles.search_input)} placeholder="Search here..." spellCheck={false} />
-                        <button className={cx(styles.search_btn_clear)}>
+                        <input
+                            value={search}
+                            className={cx(styles.search_input)}
+                            onChange={(event) => setSearch(event.target.value)}
+                            placeholder="Search here..."
+                            spellCheck={false}
+                        />
+                        <button className={cx(styles.search_btn_clear)} onClick={() => setSearch('')}>
                             <FontAwesomeIcon icon={faCircleXmark} />
                         </button>
-                        <button className={cx(styles.search_btn)}>
+                        <button
+                            className={cx(styles.search_btn)}
+                            // onClick={async () => {
+                            //     setSearchItem(await Items.SEARCH(search));
+                            // }}
+                        >
                             <FontAwesomeIcon icon={faMagnifyingGlass} />
                         </button>
                     </div>

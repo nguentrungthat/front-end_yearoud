@@ -86,7 +86,7 @@ async function GHN_Create(KH, store, items, PAYMENT) {
         pickup_time: null,
         items: arrItems,
     };
-    console.log(data);
+    // console.log(data);
     await axios
         .post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create', data, config)
         .then(function (response) {
@@ -149,14 +149,13 @@ async function GHN_Preview(KH, store, items, PAYMENT) {
         pick_station_id: null,
         deliver_station_id: null,
         insurance_value: 100000,
-        service_id: 0,
         service_type_id: 2,
         coupon: null,
         pick_shift: null,
         pickup_time: null,
         items: arrItems,
     };
-
+    // console.log(data);
     await axios
         .post('https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/preview', data, config)
         .then(function (response) {
