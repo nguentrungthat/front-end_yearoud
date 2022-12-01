@@ -3,6 +3,8 @@ import VatPham from '../AdminPage/VatPham';
 import KhachHang from '../AdminPage/KhachHang';
 import CuaHang from '../AdminPage/CuaHang';
 import DonMua from '../AdminPage/DonMua';
+import MaGiamGia from '../AdminPage/MaGiamGia';
+import ThongKe from '../AdminPage/ThongKe';
 import User from '../components/Layout/UserLayout';
 import Login from '../components/Layout/Login';
 import Home from '../UserPage/Main/index';
@@ -27,6 +29,8 @@ const publicRoutes = [
     { path: '/admin/KhachHang', component: KhachHang },
     { path: '/admin/CuaHang', component: CuaHang },
     { path: '/admin/DonMua', component: DonMua },
+    { path: '/admin/magiamgia', component: MaGiamGia },
+    { path: '/admin/thongke', component: ThongKe },
 ];
 const privateRoutes = [];
 

@@ -1,50 +1,83 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
+import Switch from '@mui/material/Switch';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
-import styles from './CuaHang.module.scss';
+import styles from './MaGiamGia.module.scss';
 
-const Cuahhangs = require('../../Controller/CuaHangController');
+const MGG = require('../../Controller/MaGiamGiaController');
 
-function CuaHang() {
-    const [cuahangs, setCuahhangs] = useState([]);
+function MaGiamGia() {
+    const [mgg, setMGG] = useState([]);
+    const [checked, setChecked] = useState([]);
     const [disXoa, setDisXoa] = useState(true);
     const [disLuu, setDisLuu] = useState(true);
 
     useEffect(() => {
         async function Get() {
-            setCuahhangs(await Cuahhangs.GET());
+            setMGG(await MGG.GET());
             setDisXoa(true);
             setDisLuu(true);
         }
         Get();
     }, []);
+
+    useMemo(() => {
+        let arrCheck = [];
+        let index = 0;
+        for (const code of mgg) {
+            let check = true;
+            if (code.ACTIVE === 0) check = false;
+            arrCheck.push(check);
+            code.index = index;
+            index++;
+        }
+        setChecked(arrCheck);
+    }, [mgg]);
+
     var rows = [];
-    for (const cuahang of cuahangs) {
+    for (const code of mgg) {
         var row = {
-            id: cuahang.ID_STORE,
-            col1: cuahang.TEN_STORE,
-            col2: cuahang.SDT,
-            col3: cuahang.ADDRESS,
-            col4: cuahang.WARD,
-            col5: cuahang.DISTRICT,
-            col6: cuahang.PROVINCE,
+            id: code.ID_MGG,
+            col1: code.MAGIAMGIA,
+            col2: new Date(code.TG_BATDAU).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10),
+            col3: new Date(code.TG_KETTHUC).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10),
+            col4: code.GIATRI_GIAM * 100 + '%',
+            col5: code,
         };
         rows.push(row);
     }
     var columns = [
-        { field: 'col1', headerName: 'Tên Cửa Hàng', width: 220 },
-        { field: 'col2', headerName: 'Số điện thoại', width: 150 },
-        { field: 'col3', headerName: 'Địa chỉ', width: 200 },
-        { field: 'col4', headerName: 'Phường/Xã', width: 200 },
-        { field: 'col5', headerName: 'Quận/Huyện', width: 200 },
-        { field: 'col6', headerName: 'Tỉnh/TP', width: 200 },
+        { field: 'col1', headerName: 'Mã Giảm Giá', width: 200 },
+        { field: 'col2', headerName: 'Thời Gian Bắt Đầu', width: 200 },
+        { field: 'col3', headerName: 'Thời Gian Kết Thúc', width: 200 },
+        { field: 'col4', headerName: 'Giá Trị Giảm', width: 150 },
+        {
+            field: 'col5',
+            headerName: 'Kích Hoạt',
+            width: 150,
+            renderCell: (params) => {
+                return (
+                    <>
+                        <Switch
+                            checked={checked[params.formattedValue.index]}
+                            onChange={() => {
+                                const code = params.formattedValue;
+                                let arrCheck = checked;
+                                arrCheck[code.index] = !checked[code.index];
+                                setChecked([...arrCheck]);
+                            }}
+                        />
+                    </>
+                );
+            },
+        },
     ];
     return (
         <div className={clsx(styles.table_container)}>
@@ -54,12 +87,12 @@ function CuaHang() {
                         Dashboard
                     </Link>
                     <Typography sx={{ fontSize: '1.4rem' }} color="text.primary">
-                        Cửa Hàng
+                        Mã Giảm Giá
                     </Typography>
                 </Breadcrumbs>
             </div>
             <div className={clsx(styles.title)}>
-                <p>Danh Sách Cửa Hàng</p>
+                <p>Danh Sách Mã Giảm Giá</p>
             </div>
             <div className={clsx(styles.actions)}>
                 <Button disabled={disLuu} className={clsx(styles.btn_action)} variant="contained">
@@ -86,9 +119,10 @@ function CuaHang() {
                 columns={columns}
                 components={{ Toolbar: GridToolbar }}
                 checkboxSelection
+                disableSelectionOnClick
             />
         </div>
     );
 }
 
-export default CuaHang;
+export default MaGiamGia;

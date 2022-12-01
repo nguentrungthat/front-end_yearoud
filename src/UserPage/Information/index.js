@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import styles from './Information.module.scss';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -21,6 +21,7 @@ function Information() {
     const [email, setEmail] = useState('');
     const [sdt, setSdt] = useState('');
     const [date, setDate] = useState('');
+    const [file, setFile] = useState({});
 
     const id = localStorage.getItem('id');
 
@@ -38,9 +39,16 @@ function Information() {
         Get();
     }, [id]);
 
+    const fileInput = useRef(null);
+
     const handleSubmit = (event) => {
         event.preventDefault();
         console.log(name, email, sdt, gender, date);
+    };
+    const handleChangeFile = (event) => {
+        const url = event.target.files[0];
+        url.review = URL.createObjectURL(url);
+        setFile(url);
     };
 
     return (
@@ -179,9 +187,15 @@ function Information() {
                 </form>
                 <div className={clsx(styles.update_avatar)}>
                     <div className={clsx(styles.avatar)}>
-                        <Avatar sx={{ width: '10rem', height: '10rem' }} alt={khachhang[0]?.TEN_KHACHHANG} />
+                        <Avatar
+                            src={file?.review}
+                            sx={{ width: '10rem', height: '10rem' }}
+                            alt={khachhang[0]?.TEN_KHACHHANG}
+                        />
                     </div>
+                    <input style={{ display: 'none' }} type="file" onChange={handleChangeFile} ref={fileInput} />
                     <Button
+                        onClick={() => fileInput.current.click()}
                         sx={{ width: '10rem', height: '4rem', fontSize: '1.4rem', textTransform: 'capitalize' }}
                         variant="outlined"
                     >

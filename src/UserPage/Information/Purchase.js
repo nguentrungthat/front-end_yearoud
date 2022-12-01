@@ -3,17 +3,23 @@ import { useState, useEffect } from 'react';
 import styles from './Information.module.scss';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import TabContext from '@mui/lab/TabContext';
+import TextField from '@mui/material/TextField';
 import TabList from '@mui/lab/TabList';
 import CardMedia from '@mui/material/CardMedia';
 import TabPanel from '@mui/lab/TabPanel';
+import Rating from '@mui/material/Rating';
 const url = 'http://localhost:8081';
 const DONMUA = require('../../Controller/DonMuaController');
 
 export default function Purchase() {
     const [value, setValue] = useState('1');
     const [donmua, setDonmua] = useState([]);
+    const [item, setItem] = useState([]);
+    const [openRating, setOpenRating] = useState(false);
+    const [nhanxet, setNhanxet] = useState('');
 
     const id = localStorage.getItem('id');
 
@@ -27,11 +33,28 @@ export default function Purchase() {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
+    const handleOpenRating = () => setOpenRating(true);
+    const handleCloseRating = () => setOpenRating(false);
 
     const handleGiao = (value) => {
         if (new Date().valueOf() < new Date(value[0]?.NGAYGIAO).valueOf()) {
             return <span className={clsx(styles.status)}>Đang giao</span>;
         } else return <span className={clsx(styles.status)}>Đã giao</span>;
+    };
+
+    const styleModal = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        pt: 2,
+        px: 4,
+        pb: 3,
+        width: 500,
+        height: 370,
     };
 
     const purchases = donmua.map((value, index) => (
@@ -95,9 +118,12 @@ export default function Purchase() {
                         Đã nhận hàng
                     </Button>
                     <Button
-                        disabled
+                        onClick={() => {
+                            setItem(value);
+                            handleOpenRating();
+                        }}
                         sx={{ minWidth: '15rem', minHeight: '4rem', fontSize: '1.6rem' }}
-                        variant="outlined"
+                        variant="contained"
                     >
                         Đánh giá
                     </Button>
@@ -130,6 +156,45 @@ export default function Purchase() {
                     </TabContext>
                 </Box>
             </div>
+            <Modal open={openRating} onClose={handleOpenRating}>
+                <Box className={clsx(styles.rating)} sx={{ ...styleModal }}>
+                    <h2 className={clsx(styles.h1)}>Đánh giá vật phẩm</h2>
+                    <span className={clsx(styles.total_label)}>{item[0]?.TEN_VATPHAM}</span>
+                    <Rating sx={{ fontSize: '3rem' }} defaultValue={5} />
+                    <TextField
+                        className={clsx(styles.textfield)}
+                        label="Nhận xét"
+                        rows={3}
+                        multiline
+                        variant="filled"
+                        value={nhanxet}
+                        onChange={(event) => setNhanxet(event.target.value)}
+                        inputProps={{ style: { width: '30rem', fontSize: '1.6rem', paddingTop: '1rem' } }}
+                        InputLabelProps={{ style: { fontSize: '1.6rem' } }}
+                        spellCheck={false}
+                    />
+                    <div style={{ width: '35rem' }}>
+                        <div className={clsx(styles.inline_flex)}>
+                            <Button
+                                onClick={handleCloseRating}
+                                sx={{ fontSize: 16, borderRadius: 23 }}
+                                variant="outlined"
+                            >
+                                Close
+                            </Button>
+                            <Button
+                                onClick={() => {
+                                    handleCloseRating();
+                                }}
+                                sx={{ fontSize: 16, borderRadius: 23 }}
+                                variant="contained"
+                            >
+                                Xác nhận
+                            </Button>
+                        </div>
+                    </div>
+                </Box>
+            </Modal>
         </div>
     );
 }

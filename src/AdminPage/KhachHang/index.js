@@ -5,15 +5,22 @@ import Button from '@mui/material/Button';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import styles from './KhachHang.module.scss';
 
 const Khachhangs = require('../../Controller/KhachHangController');
 
 function KhachHang() {
     const [khachhangs, setKhachhangs] = useState([]);
+    const [disXoa, setDisXoa] = useState(true);
+    const [disLuu, setDisLuu] = useState(true);
     useEffect(() => {
         async function Get() {
             setKhachhangs(await Khachhangs.GET());
+            setDisXoa(true);
+            setDisLuu(true);
         }
         Get();
     }, []);
@@ -46,15 +53,30 @@ function KhachHang() {
     ];
     return (
         <div className={clsx(styles.table_container)}>
+            <div className={clsx(styles.breadcrumbs)}>
+                <Breadcrumbs sx={{ fontSize: '1.4rem' }}>
+                    <Link underline="hover" color="inherit" href="/admin">
+                        Dashboard
+                    </Link>
+                    <Typography sx={{ fontSize: '1.4rem' }} color="text.primary">
+                        Khách Hàng
+                    </Typography>
+                </Breadcrumbs>
+            </div>
             <div className={clsx(styles.title)}>
                 <p>Danh Sách Khách Hàng</p>
             </div>
             <div className={clsx(styles.actions)}>
-                <Button className={clsx(styles.btn_action)} variant="contained">
+                <Button disabled={disLuu} className={clsx(styles.btn_action)} variant="contained">
                     <SaveIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
                     Lưu
                 </Button>
-                <Button className={clsx(styles.btn_action)} variant="contained" sx={{ mr: '1rem', bgcolor: '#d12525' }}>
+                <Button
+                    disabled={disXoa}
+                    className={clsx(styles.btn_action)}
+                    variant="contained"
+                    sx={{ mr: '1rem', bgcolor: '#d12525' }}
+                >
                     <DeleteForeverIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
                     Xóa
                 </Button>
