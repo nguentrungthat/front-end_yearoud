@@ -1,0 +1,103 @@
+.login {
+    width: 680px;
+    background: #fff;
+    border-radius: 10px;
+    position: relative;
+    padding: 3rem 11rem 1rem 11rem;
+}
+
+.login_form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.login_title {
+    font-family: Montserrat-Medium;
+    font-size: 39px;
+    color: #555;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.sign_in_media {
+    width: 15rem;
+    display: inline-flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.btn_sign_in {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1.2rem;
+    text-transform: capitalize !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+    &:hover {
+        color: #fff;
+        border-color: #fc00ff;
+        background: linear-gradient(45deg, #00dbde, #fc00ff);
+    }
+}
+
+.btn_sign_up {
+    height: 5rem;
+    border-radius: 1.2rem;
+    font-size: 2rem !important;
+    text-transform: capitalize !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+    &:hover {
+        color: #fff;
+        border-color: #fc00ff;
+        background: linear-gradient(45deg, #00dbde, #fc00ff);
+    }
+}
+
+.info_signup {
+    min-height: 30rem;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.change_page {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #999;
+}
+
+.label {
+    font-family: Montserrat-SemiBold;
+    font-size: 20px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.sign_up {
+    color: #999;
+    padding-top: 1rem;
+}
+
+.or {
+    font-family: Montserrat-SemiBold;
+    font-size: 18px;
+    color: #555;
+    line-height: 1.5;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.flex_inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+}

@@ -1,6 +1,6 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import clsx from 'clsx';
-import { useEffect, useState, forwardRef } from 'react';
+import { useEffect, useState, forwardRef, useRef } from 'react';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import Box from '@mui/material/Box';
@@ -35,6 +35,7 @@ function VatPham() {
     const [deletion, setDeletion] = useState([]);
     const [update, setUpdate] = useState([]);
     const [selectionModel, setSelectionModel] = useState([]);
+    const [file, setFile] = useState({});
 
     useEffect(() => {
         async function Get() {
@@ -51,6 +52,8 @@ function VatPham() {
         GET_LOAI();
     }, []);
 
+    const fileInput = useRef(null);
+
     const handleOpenModalAdd = () => setOpenModalAdd(true);
     const handleCloseModalAdd = () => setOpenModalAdd(false);
     const handleOpenAlert = () => setOpenAlert(true);
@@ -65,6 +68,11 @@ function VatPham() {
         }
         setRows(table);
         setDisLuu(false);
+    };
+    const handleChangeFile = (event) => {
+        const url = event.target.files[0];
+        url.review = URL.createObjectURL(url);
+        setFile(url);
     };
 
     var columns = [
@@ -141,6 +149,17 @@ function VatPham() {
                             variant="outlined"
                         />
                     </div>
+                </div>
+                <div>
+                    <input style={{ display: 'none' }} type="file" onChange={handleChangeFile} ref={fileInput} />
+                    <Button
+                        onClick={() => fileInput.current.click()}
+                        sx={{ width: '10rem', height: '4rem', fontSize: '1.4rem', textTransform: 'capitalize' }}
+                        variant="outlined"
+                    >
+                        Chọn ảnh
+                    </Button>
+                    <span className={clsx(styles.text_format)}>{file.name}</span>
                 </div>
                 <div className={clsx(styles.action_add, styles.flex_inline)}>
                     <Button

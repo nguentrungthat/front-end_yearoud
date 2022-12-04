@@ -119,7 +119,7 @@ function Main() {
                                 onChange={handleChange5}
                             />
                         }
-                        label="Đồng hồ"
+                        label="Phụ kiện"
                     />
                 </FormGroup>
             </div>

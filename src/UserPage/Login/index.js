@@ -74,12 +74,12 @@ export default function Login() {
                         variant="contained"
                         sx={{ width: '100%', bgcolor: '#333', color: '#fff', mt: '8px' }}
                     >
-                        Sign In
+                        Đăng nhập
                     </Button>
                 </Box>
                 <div className={cx(styles.sign_up)}>
                     <span className={cx(styles.sign_up_lable)}>Bạn chưa có tài khoản</span>
-                    <a href=" " className={cx(styles.forgot_pass)}>
+                    <a href="/signup" className={cx(styles.forgot_pass)}>
                         Đăng ký ngay!
                     </a>
                 </div>

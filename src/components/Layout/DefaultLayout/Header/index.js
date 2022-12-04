@@ -1,6 +1,6 @@
 import cx from 'clsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faCircleXmark, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
@@ -30,15 +30,7 @@ function Header() {
                     <button className={cx(styles.sidebar_toggler)}>
                         <FontAwesomeIcon icon={faBars} />
                     </button>
-                    <div className={cx(styles.search_box)}>
-                        <input className={cx(styles.search_input)} placeholder="Search here..." spellCheck={false} />
-                        <button className={cx(styles.search_btn_clear)}>
-                            <FontAwesomeIcon icon={faCircleXmark} />
-                        </button>
-                        <button className={cx(styles.search_btn)}>
-                            <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        </button>
-                    </div>
+
                     <div className={cx(styles.options)}>
                         <List
                             sx={{

@@ -31,3 +31,47 @@
     align-items: center;
     justify-content: center;
 }
+
+.title_modal {
+    font-size: 3.2rem;
+    margin-left: 35%;
+    margin-top: 2rem;
+}
+
+.label {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.flex_inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.flex_column {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    width: 30rem;
+    height: 25rem;
+    margin-left: 3rem;
+}
+
+.action_add {
+    width: 30rem;
+    margin-left: 33%;
+    margin-top: 2rem;
+}
+
+.date {
+    margin-right: 1rem;
+}
+
+.selectbox {
+    height: 4rem;
+    width: 25rem;
+    border-radius: 0.8rem;
+    font-size: 1.6rem;
+    padding-left: 0.4rem;
+}

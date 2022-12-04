@@ -356,12 +356,12 @@ function ItemDetails() {
                                 <Tab
                                     sx={{ fontSize: '1.5rem', fontFamily: 'Poppins-Regular' }}
                                     value="1"
-                                    label="Mô tả"
+                                    label="Thông tin sản phẩm"
                                 />
                                 <Tab
                                     sx={{ fontSize: '1.5rem', fontFamily: 'Poppins-Regular' }}
                                     value="2"
-                                    label="Thông tin sản phẩm"
+                                    label="Mô tả"
                                 />
                                 <Tab
                                     sx={{ fontSize: '1.5rem', fontFamily: 'Poppins-Regular' }}
@@ -370,10 +370,10 @@ function ItemDetails() {
                                 />
                             </TabList>
                         </Box>
-                        <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="1">
+                        <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
                             Mô tả sản phẩm
                         </TabPanel>
-                        <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
+                        <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="1">
                             - Size vật phẩm:<span className={cx(styles.weight_600)}> {item[0]?.SIZE}</span> <br />- Màu
                             sắc vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.COLOR}</span> <br />- Xuất
                             xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span>

@@ -11,7 +11,6 @@ import { Link } from 'react-router-dom';
 import styles from './Sidebar.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCubes, faFileContract, faHouse, faShop, faUsers, faTicket } from '@fortawesome/free-solid-svg-icons';
-import { faShopify } from '@fortawesome/free-brands-svg-icons';
 
 function Sidebar() {
     const style = {
@@ -61,13 +60,6 @@ function Sidebar() {
                     <ListItem button>
                         <FontAwesomeIcon className={cx(styles.icon)} icon={faShop} />
                         <ListItemText primaryTypographyProps={ListTextStyle} primary="Cửa Hàng" />
-                    </ListItem>
-                </Link>
-                <Divider light />
-                <Link className={cx(styles.link)} to={'/admin/DonMua'}>
-                    <ListItem button>
-                        <FontAwesomeIcon className={cx(styles.icon)} icon={faShopify} />
-                        <ListItemText primaryTypographyProps={ListTextStyle} primary="Đơn Mua" />
                     </ListItem>
                 </Link>
                 <Divider light />
