@@ -40,16 +40,11 @@ function VatPham() {
     useEffect(() => {
         async function Get() {
             setRows(await Items.GET_ROWS_ITEM());
-        }
-        async function GetStore() {
             setStores(await STORE.GET());
-        }
-        async function GET_LOAI() {
             setLoais(await Items.GET_LOAI());
+            return;
         }
         Get();
-        GetStore();
-        GET_LOAI();
     }, []);
 
     const fileInput = useRef(null);
@@ -240,15 +235,15 @@ function VatPham() {
                 <Button
                     onClick={async () => {
                         if (creation.length > 0) {
-                            await Items.SAVE(creation, 1);
+                            await Items.CREATE_ITEM(creation);
                             setCreation([]);
                         }
                         if (deletion.length > 0) {
-                            await Items.SAVE(deletion, 2);
+                            await Items.DELETE_ITEM(deletion);
                             setDeletion([]);
                         }
                         if (update.length > 0) {
-                            await Items.SAVE(update, 3);
+                            await Items.UPDATE_ITEM(update);
                             setUpdate([]);
                         }
                         setDisLuu(false);

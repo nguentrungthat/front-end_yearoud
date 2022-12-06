@@ -147,21 +147,6 @@ function arrayUnique(array) {
     return a;
 }
 
-async function SAVE(arr, type) {
-    if (type === 1) {
-        console.log(arr);
-        return await CREATE_ITEM(arr);
-    }
-    if (type === 2) {
-        console.log(arr);
-        return await DELETE_ITEM(arr);
-    }
-    if (type === 3) {
-        console.log(arr);
-        return await UPDATE_ITEM(arr);
-    }
-}
-
 async function CREATE_ITEM(data) {
     return await Api.Post('items/create', data);
 }
@@ -178,4 +163,4 @@ async function SEARCH(str) {
     return await Api.Post('items/search', { SEARCH: str });
 }
 
-export { GET, OnLoad, POST_ITEM, USER, RATING, GET_LOAI, GET_ROWS_ITEM, SAVE, SEARCH };
+export { GET, OnLoad, POST_ITEM, USER, RATING, GET_LOAI, GET_ROWS_ITEM, SEARCH, CREATE_ITEM, UPDATE_ITEM, DELETE_ITEM };

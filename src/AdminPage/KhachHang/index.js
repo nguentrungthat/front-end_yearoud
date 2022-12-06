@@ -12,6 +12,11 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 import Modal from '@mui/material/Modal';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -20,23 +25,44 @@ import styles from './KhachHang.module.scss';
 const Khachhangs = require('../../Controller/KhachHangController');
 
 function KhachHang() {
-    const [khachhangs, setKhachhangs] = useState([]);
     const [disXoa, setDisXoa] = useState(true);
     const [disLuu, setDisLuu] = useState(true);
     const [openModalAdd, setOpenModalAdd] = useState(false);
     const [date, setDate] = useState(new Date());
+    const [checkRadio, setCheckRadio] = useState(1);
+    const [ten, setTen] = useState('');
+    const [email, setEmail] = useState('');
+    const [diachi, setDiachi] = useState('');
+    const [sdt, setSDT] = useState('');
+    const [rows, setRows] = useState([]);
+    const [creation, setCreation] = useState([]);
+    const [deletion, setDeletion] = useState([]);
+    const [update, setUpdate] = useState([]);
+    const [selectionModel, setSelectionModel] = useState([]);
 
     useEffect(() => {
         async function Get() {
-            setKhachhangs(await Khachhangs.GET());
-            setDisXoa(true);
-            setDisLuu(true);
+            setRows(await Khachhangs.GET_ROWS());
         }
         Get();
     }, []);
 
+    const handleChangeRadio = (event) => {
+        setCheckRadio(event.target.value);
+    };
     const handleOpenModalAdd = () => setOpenModalAdd(true);
     const handleCloseModalAdd = () => setOpenModalAdd(false);
+    const handleDelete = () => {
+        const table = [...rows];
+        setDeletion(selectionModel);
+        for (const ID of selectionModel) {
+            for (var i = 0; i < table.length; i++) {
+                if (table[i].id === ID) table.splice(i, 1);
+            }
+        }
+        setRows(table);
+        setDisLuu(false);
+    };
 
     const styleModal = {
         position: 'absolute',
@@ -54,32 +80,14 @@ function KhachHang() {
         flexDirection: 'column',
     };
 
-    var rows = [];
-    for (const khachhang of khachhangs) {
-        var gioitinh = '';
-        if (khachhang.GIOITINH === 1) {
-            gioitinh = 'Nam';
-        } else if (khachhang.GIOITINH === 2) {
-            gioitinh = 'Nữ';
-        } else {
-            gioitinh = 'Không rõ';
-        }
-        var row = {
-            id: khachhang.ID_KHACHHANG,
-            col1: khachhang.TEN_KHACHHANG,
-            col2: gioitinh,
-            col3: khachhang.SDT,
-            col4: khachhang.DIACHI,
-            col5: khachhang.EMAIL,
-        };
-        rows.push(row);
-    }
     var columns = [
-        { field: 'col1', headerName: 'Tên Khách Hàng', width: 300 },
-        { field: 'col2', headerName: 'Giới Tính', width: 150 },
-        { field: 'col3', headerName: 'Số Điện Thoại', width: 200 },
-        { field: 'col4', headerName: 'Địa Chỉ', width: 250 },
-        { field: 'col5', headerName: 'E-mail', width: 250 },
+        { field: 'id' },
+        { field: 'col1', headerName: 'Tên Khách Hàng', width: 250, editable: true },
+        { field: 'col2', headerName: 'Ngày Sinh', width: 150, editable: true },
+        { field: 'col3', headerName: 'Giới Tính', width: 100, editable: true },
+        { field: 'col4', headerName: 'Số Điện Thoại', width: 150, editable: true },
+        { field: 'col5', headerName: 'Địa Chỉ', width: 200, editable: true },
+        { field: 'col6', headerName: 'E-mail', width: 200, editable: true },
     ];
     return (
         <div className={clsx(styles.table_container)}>
@@ -97,11 +105,31 @@ function KhachHang() {
                 <p>Danh Sách Khách Hàng</p>
             </div>
             <div className={clsx(styles.actions)}>
-                <Button disabled={disLuu} className={clsx(styles.btn_action)} variant="contained">
+                <Button
+                    onClick={async () => {
+                        if (creation.length > 0) {
+                            await Khachhangs.CREATE(creation);
+                            setCreation([]);
+                        }
+                        if (update.length > 0) {
+                            await Khachhangs.UPDATE(update);
+                            setUpdate([]);
+                        }
+                        if (deletion.length > 0) {
+                            await Khachhangs.DELETE(deletion);
+                            setDeletion([]);
+                        }
+                        setDisLuu(true);
+                    }}
+                    disabled={disLuu}
+                    className={clsx(styles.btn_action)}
+                    variant="contained"
+                >
                     <SaveIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
                     Lưu
                 </Button>
                 <Button
+                    onClick={handleDelete}
                     disabled={disXoa}
                     className={clsx(styles.btn_action)}
                     variant="contained"
@@ -122,25 +150,123 @@ function KhachHang() {
             </div>
             <DataGrid
                 sx={{ fontSize: '1.6rem' }}
+                initialState={{
+                    sorting: {
+                        sortModel: [{ field: 'id', sort: 'desc' }],
+                    },
+                }}
+                columnVisibilityModel={{
+                    id: false,
+                }}
                 rows={rows}
                 columns={columns}
                 components={{ Toolbar: GridToolbar }}
                 checkboxSelection
                 disableSelectionOnClick
+                onSelectionModelChange={async (newSelectionModel) => {
+                    setSelectionModel(newSelectionModel);
+                    if (newSelectionModel.length > 0) {
+                        setDisXoa(false);
+                    } else {
+                        setDisXoa(true);
+                    }
+                }}
+                selectionModel={selectionModel}
+                onCellEditCommit={(value) => {
+                    setDisLuu(false);
+                    setUpdate(update.concat([value]));
+                }}
             />
             <Modal open={openModalAdd} onClose={handleCloseModalAdd}>
                 <Box sx={styleModal}>
                     <span className={clsx(styles.title_modal)}>Thêm Khách Hàng</span>
                     <span className={clsx(styles.label)}>Tên Khách Hàng</span>
-                    <TextField label="Tên khách hàng" variant="outlined" />
-                    <span className={clsx(styles.label)}>Email</span>
-                    <TextField label="Email" variant="outlined" />
+                    <TextField onChange={(e) => setTen(e.target.value)} label="Tên khách hàng" variant="outlined" />
+                    <div className={clsx(styles.flex_inline)}>
+                        <div>
+                            <span className={clsx(styles.label)}>Email</span>
+                            <br />
+                            <TextField
+                                onChange={(e) => setEmail(e.target.value)}
+                                sx={{ width: '25rem' }}
+                                label="Email"
+                                variant="outlined"
+                            />
+                        </div>
+                        <div style={{ marginLeft: '1.5rem' }}>
+                            <FormControl>
+                                <FormLabel>Giới tính</FormLabel>
+                                <RadioGroup row value={checkRadio} onChange={handleChangeRadio}>
+                                    <FormControlLabel
+                                        sx={{
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: 16,
+                                            },
+                                        }}
+                                        value={1}
+                                        control={
+                                            <Radio
+                                                sx={{
+                                                    '& .MuiSvgIcon-root': {
+                                                        fontSize: 22,
+                                                    },
+                                                }}
+                                            />
+                                        }
+                                        label="Nam"
+                                    />
+                                    <FormControlLabel
+                                        sx={{
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: 16,
+                                            },
+                                        }}
+                                        value={2}
+                                        control={
+                                            <Radio
+                                                sx={{
+                                                    '& .MuiSvgIcon-root': {
+                                                        fontSize: 22,
+                                                    },
+                                                }}
+                                            />
+                                        }
+                                        label="Nữ"
+                                    />
+                                    <FormControlLabel
+                                        sx={{
+                                            '& .MuiFormControlLabel-label': {
+                                                fontSize: 16,
+                                            },
+                                        }}
+                                        value={3}
+                                        control={
+                                            <Radio
+                                                sx={{
+                                                    '& .MuiSvgIcon-root': {
+                                                        fontSize: 22,
+                                                    },
+                                                }}
+                                            />
+                                        }
+                                        label="Khác"
+                                    />
+                                </RadioGroup>
+                            </FormControl>
+                        </div>
+                    </div>
+
                     <span className={clsx(styles.label)}>Địa Chỉ</span>
-                    <TextField label="Địa chỉ" variant="outlined" />
+                    <TextField onChange={(e) => setDiachi(e.target.value)} label="Địa chỉ" variant="outlined" />
                     <div className={clsx(styles.flex_inline)}>
                         <div>
                             <span className={clsx(styles.label)}>Số Điện Thoại</span>
-                            <TextField sx={{ width: '25rem' }} label="Số điện thoại" variant="outlined" />
+                            <TextField
+                                onChange={(e) => setSDT(e.target.value)}
+                                sx={{ width: '25rem' }}
+                                label="Số điện thoại"
+                                variant="outlined"
+                            />
                         </div>
                         <div className={clsx(styles.date)}>
                             <span className={clsx(styles.label)}>Ngày Sinh</span>
@@ -158,7 +284,42 @@ function KhachHang() {
                         </div>
                     </div>
                     <div className={clsx(styles.action_add, styles.flex_inline)}>
-                        <Button className={clsx(styles.btn_action)} variant="contained">
+                        <Button
+                            onClick={async () => {
+                                var gioitinh = '';
+                                if (checkRadio === 1) {
+                                    gioitinh = 'Nam';
+                                } else if (checkRadio === 2) {
+                                    gioitinh = 'Nữ';
+                                } else {
+                                    gioitinh = 'Không rõ';
+                                }
+                                const row = {
+                                    id: rows[rows.length - 1].id + 1,
+                                    col1: ten,
+                                    col2: new Date(date).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10),
+                                    col3: gioitinh,
+                                    col4: sdt,
+                                    col5: diachi,
+                                    col6: email,
+                                };
+                                const kh = {
+                                    TEN_KHACHHANG: ten,
+                                    EMAIL: email,
+                                    SDT: sdt,
+                                    DIACHI: diachi,
+                                    GIOITINH: checkRadio,
+                                    NGAYSINH: new Date(date).toISOString().slice(0, 10),
+                                    NGAYTAO: new Date().toISOString().slice(0, 10),
+                                };
+                                setRows(rows.concat([row]));
+                                setCreation(creation.concat([kh]));
+                                setDisLuu(false);
+                                handleCloseModalAdd();
+                            }}
+                            className={clsx(styles.btn_action)}
+                            variant="contained"
+                        >
                             <SaveIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
                             Thêm
                         </Button>
