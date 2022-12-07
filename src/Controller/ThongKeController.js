@@ -1,15 +1,15 @@
 import Api from './api';
 
-async function GET() {
-    var body = null;
-    body = await Api.Get('thongke');
-    return body;
+async function GET(body) {
+    return await Api.Post('thongke', body);
+}
+
+async function GET_VP(body) {
+    return await Api.Post('thongke/vatpham', body);
 }
 
 async function GET_LOAIVP() {
-    var body = null;
-    body = await Api.Get('items/getloai');
-    return body;
+    return await Api.Get('items/getloai');
 }
 
-export { GET, GET_LOAIVP };
+export { GET, GET_LOAIVP, GET_VP };

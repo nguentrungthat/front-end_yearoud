@@ -26,11 +26,19 @@ function MaGiamGia() {
     const [disXoa, setDisXoa] = useState(true);
     const [disLuu, setDisLuu] = useState(true);
     const [openModalAdd, setOpenModalAdd] = useState(false);
-    const [date, setDate] = useState(new Date());
+    const [newMgg, setNewMgg] = useState('');
+    const [giatrigiam, setGiatrigiam] = useState('');
+    const [active, setActive] = useState(true);
+    const [batdau, setBatDau] = useState(new Date());
+    const [ketthuc, setKetThuc] = useState(new Date());
+    const [creation, setCreation] = useState([]);
+    const [deletion, setDeletion] = useState([]);
+    const [update, setUpdate] = useState([]);
+    const [selectionModel, setSelectionModel] = useState([]);
 
     useEffect(() => {
         async function Get() {
-            setMGG(await MGG.GET());
+            setMGG((await MGG.GET())[0]);
             setDisXoa(true);
             setDisLuu(true);
         }
@@ -38,20 +46,25 @@ function MaGiamGia() {
     }, []);
 
     useMemo(() => {
-        let arrCheck = [];
-        let index = 0;
-        for (const code of mgg) {
-            let check = true;
-            if (code.ACTIVE === 0) check = false;
-            arrCheck.push(check);
-            code.index = index;
-            index++;
+        async function Get() {
+            setChecked((await MGG.GET())[1]);
         }
-        setChecked(arrCheck);
-    }, [mgg]);
+        Get();
+    }, []);
 
     const handleOpenModalAdd = () => setOpenModalAdd(true);
     const handleCloseModalAdd = () => setOpenModalAdd(false);
+    const handleDelete = () => {
+        const table = [...mgg];
+        setDeletion(selectionModel);
+        for (const ID of selectionModel) {
+            for (var i = 0; i < table.length; i++) {
+                if (table[i].id === ID) table.splice(i, 1);
+            }
+        }
+        setMGG(table);
+        setDisLuu(false);
+    };
 
     const styleModal = {
         position: 'absolute',
@@ -69,23 +82,12 @@ function MaGiamGia() {
         flexDirection: 'column',
     };
 
-    var rows = [];
-    for (const code of mgg) {
-        var row = {
-            id: code.ID_MGG,
-            col1: code.MAGIAMGIA,
-            col2: new Date(code.TG_BATDAU).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10),
-            col3: new Date(code.TG_KETTHUC).toLocaleString('en-GB', { timeZone: 'UTC' }).slice(0, 10),
-            col4: code.GIATRI_GIAM * 100 + '%',
-            col5: code,
-        };
-        rows.push(row);
-    }
     var columns = [
-        { field: 'col1', headerName: 'Mã Giảm Giá', width: 200 },
-        { field: 'col2', headerName: 'Thời Gian Bắt Đầu', width: 200 },
-        { field: 'col3', headerName: 'Thời Gian Kết Thúc', width: 200 },
-        { field: 'col4', headerName: 'Giá Trị Giảm', width: 150 },
+        { field: 'id' },
+        { field: 'col1', headerName: 'Mã Giảm Giá', width: 200, editable: true },
+        { field: 'col2', headerName: 'Thời Gian Bắt Đầu', width: 200, editable: true },
+        { field: 'col3', headerName: 'Thời Gian Kết Thúc', width: 200, editable: true },
+        { field: 'col4', headerName: 'Giá Trị Giảm', width: 150, editable: true },
         {
             field: 'col5',
             headerName: 'Kích Hoạt',
@@ -94,12 +96,32 @@ function MaGiamGia() {
                 return (
                     <>
                         <Switch
-                            checked={checked[params.formattedValue.index]}
+                            checked={checked[params.row.index]}
                             onChange={() => {
-                                const code = params.formattedValue;
+                                const index = params.row.index;
                                 let arrCheck = checked;
-                                arrCheck[code.index] = !checked[code.index];
+                                arrCheck[index] = !checked[index];
+                                let isExist = 0;
+                                let isActive = 1;
+                                if (!arrCheck[index]) isActive = 0;
+                                for (let i = 0; i < update.length; i++) {
+                                    if (update[i].id === params.row.id) {
+                                        let updated = update;
+                                        updated[i].value = isActive;
+                                        setUpdate([...updated]);
+                                        isExist = 1;
+                                    }
+                                }
+                                if (isExist === 0) {
+                                    const value = {
+                                        id: params.row.id,
+                                        field: 'col5',
+                                        value: isActive,
+                                    };
+                                    setUpdate(update.concat([value]));
+                                }
                                 setChecked([...arrCheck]);
+                                setDisLuu(false);
                             }}
                         />
                     </>
@@ -107,6 +129,7 @@ function MaGiamGia() {
             },
         },
     ];
+
     return (
         <div className={clsx(styles.table_container)}>
             <div className={clsx(styles.breadcrumbs)}>
@@ -123,11 +146,34 @@ function MaGiamGia() {
                 <p>Danh Sách Mã Giảm Giá</p>
             </div>
             <div className={clsx(styles.actions)}>
-                <Button disabled={disLuu} className={clsx(styles.btn_action)} variant="contained">
+                <Button
+                    onClick={async () => {
+                        if (creation.length > 0) {
+                            console.log(creation);
+                            await MGG.CREATE(creation);
+                            setCreation([]);
+                        }
+                        if (update.length > 0) {
+                            console.log(update);
+                            await MGG.UPDATE(update);
+                            setUpdate([]);
+                        }
+                        if (deletion.length > 0) {
+                            console.log(deletion);
+                            await MGG.DELETE(deletion);
+                            setDeletion([]);
+                        }
+                        setDisLuu(true);
+                    }}
+                    disabled={disLuu}
+                    className={clsx(styles.btn_action)}
+                    variant="contained"
+                >
                     <SaveIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
                     Lưu
                 </Button>
                 <Button
+                    onClick={handleDelete}
                     disabled={disXoa}
                     className={clsx(styles.btn_action)}
                     variant="contained"
@@ -148,25 +194,51 @@ function MaGiamGia() {
             </div>
             <DataGrid
                 sx={{ fontSize: '1.6rem' }}
-                rows={rows}
+                initialState={{
+                    sorting: {
+                        sortModel: [{ field: 'id', sort: 'desc' }],
+                    },
+                }}
+                columnVisibilityModel={{
+                    id: false,
+                }}
+                rows={mgg}
                 columns={columns}
                 components={{ Toolbar: GridToolbar }}
                 checkboxSelection
                 disableSelectionOnClick
+                onSelectionModelChange={async (newSelectionModel) => {
+                    setSelectionModel(newSelectionModel);
+                    if (newSelectionModel.length > 0) {
+                        setDisXoa(false);
+                    } else {
+                        setDisXoa(true);
+                    }
+                }}
+                selectionModel={selectionModel}
+                onCellEditCommit={(value) => {
+                    setDisLuu(false);
+                    setUpdate(update.concat([value]));
+                }}
             />
             <Modal open={openModalAdd} onClose={handleCloseModalAdd}>
                 <Box sx={styleModal}>
                     <span className={clsx(styles.title_modal)}>Thêm Mã Giảm giá</span>
                     <span className={clsx(styles.label)}>Mã Giảm Giá</span>
-                    <TextField label="Mã giảm giá" variant="outlined" />
+                    <TextField onChange={(e) => setNewMgg(e.target.value)} label="Mã giảm giá" variant="outlined" />
                     <div className={clsx(styles.flex_inline)}>
                         <div>
                             <span className={clsx(styles.label)}>Giá Trị Giảm (%)</span>
-                            <TextField sx={{ width: '80%' }} label="Giá trị giảm" variant="outlined" />
+                            <TextField
+                                onChange={(e) => setGiatrigiam(e.target.value)}
+                                sx={{ width: '80%' }}
+                                label="Giá trị giảm"
+                                variant="outlined"
+                            />
                         </div>
                         <div>
                             <span className={clsx(styles.label)}>Kích hoạt</span>
-                            <Switch defaultChecked />
+                            <Switch checked={active} onChange={() => setActive(!active)} />
                         </div>
                     </div>
                     <div className={clsx(styles.flex_inline)}>
@@ -175,10 +247,10 @@ function MaGiamGia() {
                             <LocalizationProvider sx={{ width: '100%' }} dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     inputProps={{ style: { fontSize: '1.2rem' } }}
-                                    value={date}
+                                    value={batdau}
                                     inputFormat="DD/MM/YYYY"
                                     onChange={(newValue) => {
-                                        setDate(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}`);
+                                        setBatDau(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}`);
                                     }}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
@@ -189,10 +261,10 @@ function MaGiamGia() {
                             <LocalizationProvider sx={{ width: '100%' }} dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     inputProps={{ style: { fontSize: '1.2rem' } }}
-                                    value={date}
+                                    value={ketthuc}
                                     inputFormat="DD/MM/YYYY"
                                     onChange={(newValue) => {
-                                        setDate(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}`);
+                                        setKetThuc(`${newValue.$y}-${newValue.$M + 1}-${newValue.$D}`);
                                     }}
                                     renderInput={(params) => <TextField {...params} />}
                                 />
@@ -200,7 +272,35 @@ function MaGiamGia() {
                         </div>
                     </div>
                     <div className={clsx(styles.action_add, styles.flex_inline)}>
-                        <Button className={clsx(styles.btn_action)} variant="contained">
+                        <Button
+                            onClick={() => {
+                                const data = {
+                                    id: mgg[mgg.length - 1].id + 1,
+                                    col1: newMgg,
+                                    col2: new Date(batdau).toLocaleString('en-GB').slice(0, 10),
+                                    col3: new Date(ketthuc).toLocaleString('en-GB').slice(0, 10),
+                                    col4: giatrigiam + '%',
+                                    col5: active,
+                                    index: mgg[mgg.length - 1].index + 1,
+                                };
+                                let isActive = 1;
+                                if (!active) isActive = 0;
+                                const ma = {
+                                    MAGIAMGIA: newMgg,
+                                    TG_BATDAU: batdau,
+                                    TG_KETTHUC: ketthuc,
+                                    GIATRI_GIAM: giatrigiam / 100,
+                                    ACTIVE: isActive,
+                                };
+                                setChecked(checked.concat(active));
+                                setCreation(creation.concat([ma]));
+                                setMGG(mgg.concat(data));
+                                setDisLuu(false);
+                                handleCloseModalAdd();
+                            }}
+                            className={clsx(styles.btn_action)}
+                            variant="contained"
+                        >
                             <SaveIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
                             Thêm
                         </Button>

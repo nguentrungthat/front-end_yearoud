@@ -115,47 +115,117 @@ function VatPham() {
         <Modal open={openModalAdd} onClose={handleCloseModalAdd}>
             <Box sx={styleModal}>
                 <span className={clsx(styles.title_modal)}>Thêm Vật Phẩm</span>
-                <span className={clsx(styles.label)}>Tên vật phẩm</span>
-                <TextField onChange={(e) => setTenvp(e.target.value)} label="Tên vật phẩm" variant="outlined" />
-                <span className={clsx(styles.label)}>Giá bán</span>
-                <TextField onChange={(e) => setGiaban(e.target.value)} label="Giá bán (VNĐ)" variant="outlined" />
                 <div className={clsx(styles.flex_inline)}>
-                    {store}
-                    {loai}
+                    <div>
+                        <span className={clsx(styles.label)}>Tên vật phẩm</span>
+                        <br />
+                        <TextField
+                            sx={{ width: '35rem' }}
+                            onChange={(e) => setTenvp(e.target.value)}
+                            label="Tên vật phẩm"
+                            variant="outlined"
+                        />
+                    </div>
+                    <div>
+                        <span className={clsx(styles.label)}>Giá bán</span>
+                        <br />
+                        <TextField
+                            sx={{ width: '15rem' }}
+                            onChange={(e) => setGiaban(e.target.value)}
+                            label="Giá bán (VNĐ)"
+                            variant="outlined"
+                        />
+                    </div>
+                </div>
+
+                <div className={clsx(styles.flex_inline)}>
+                    <div>
+                        <span className={clsx(styles.label)}>Kích Thước</span>
+                        <br />
+                        <TextField
+                            onChange={(e) => setSoluong(e.target.value)}
+                            sx={{ width: '25rem' }}
+                            label="Kích thước"
+                            variant="outlined"
+                            placeholder="S, M, L,..."
+                        />
+                    </div>
+                    <div>
+                        <span className={clsx(styles.label)}>Màu Sắc</span>
+                        <br />
+                        <TextField
+                            onChange={(e) => setMota(e.target.value)}
+                            multiline
+                            sx={{ width: '25rem' }}
+                            maxRows={10}
+                            label="Màu sắc"
+                            variant="outlined"
+                            placeholder="Trắng, Đen,..."
+                        />
+                    </div>
+                </div>
+                <div className={clsx(styles.flex_inline)}>
+                    <div>
+                        <span className={clsx(styles.label)}>Thuộc cửa hàng</span>
+                        <br />
+                        {store}
+                    </div>
+                    <div>
+                        <span className={clsx(styles.label)}>Thuộc loại</span>
+                        <br />
+                        {loai}
+                    </div>
                 </div>
                 <div className={clsx(styles.flex_inline)}>
                     <div>
                         <span className={clsx(styles.label)}>Số lượng trong kho</span>
+                        <br />
                         <TextField
                             onChange={(e) => setSoluong(e.target.value)}
-                            sx={{ width: '20rem' }}
+                            sx={{ width: '25rem' }}
                             label="Số lượng trong kho"
                             variant="outlined"
                         />
                     </div>
                     <div>
                         <span className={clsx(styles.label)}>Mô tả</span>
+                        <br />
                         <TextField
                             onChange={(e) => setMota(e.target.value)}
                             multiline
-                            sx={{ width: '30rem' }}
+                            sx={{ width: '25rem' }}
                             maxRows={10}
                             label="Mô tả"
                             variant="outlined"
                         />
                     </div>
                 </div>
-                <div>
-                    <input style={{ display: 'none' }} type="file" onChange={handleChangeFile} ref={fileInput} />
-                    <Button
-                        onClick={() => fileInput.current.click()}
-                        sx={{ width: '10rem', height: '4rem', fontSize: '1.4rem', textTransform: 'capitalize' }}
-                        variant="outlined"
-                    >
-                        Chọn ảnh
-                    </Button>
-                    <span className={clsx(styles.text_format)}>{file.name}</span>
+                <div className={clsx(styles.flex_inline)}>
+                    <div>
+                        <span className={clsx(styles.label)}>Xuất Xứ</span>
+                        <br />
+                        <TextField
+                            onChange={(e) => setSoluong(e.target.value)}
+                            sx={{ width: '25rem' }}
+                            label="Xuất xứ"
+                            variant="outlined"
+                        />
+                    </div>
+                    <div style={{ width: '25rem' }}>
+                        <span className={clsx(styles.label)}>Hình ảnh sản phẩm</span>
+                        <br />
+                        <input style={{ display: 'none' }} type="file" onChange={handleChangeFile} ref={fileInput} />
+                        <Button
+                            onClick={() => fileInput.current.click()}
+                            sx={{ width: '10rem', height: '4rem', fontSize: '1.4rem', textTransform: 'capitalize' }}
+                            variant="outlined"
+                        >
+                            Chọn ảnh
+                        </Button>
+                        <span className={clsx(styles.text_format)}>{file.name}</span>
+                    </div>
                 </div>
+
                 <div className={clsx(styles.action_add, styles.flex_inline)}>
                     <Button
                         onClick={() => {
