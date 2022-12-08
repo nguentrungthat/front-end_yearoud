@@ -168,4 +168,23 @@ async function GHN_Preview(KH, store, items, PAYMENT) {
     return body;
 }
 
-module.exports = { Get, Post, GHN_Create, GHN_Preview };
+async function Post_file(link, data) {
+    var body = null;
+    const config = {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    };
+    await axios
+        .post(`${url}/${link}`, data, config)
+        .then(function (response) {
+            body = response.data;
+        })
+        .catch(function (error) {
+            // handle error
+            console.log(error);
+        });
+    return body;
+}
+
+module.exports = { Get, Post, GHN_Create, GHN_Preview, Post_file };

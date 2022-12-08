@@ -185,4 +185,26 @@ async function SEARCH(str) {
     return body;
 }
 
-export { GET, OnLoad, POST_ITEM, USER, RATING, GET_LOAI, GET_ROWS_ITEM, SEARCH, CREATE_ITEM, UPDATE_ITEM, DELETE_ITEM };
+async function ADD_FILE(formData) {
+    return await Api.Post_file('items/add_file', formData);
+}
+
+async function ADD_IMG(body) {
+    return await Api.Post('items/add_img', body);
+}
+
+export {
+    GET,
+    OnLoad,
+    POST_ITEM,
+    USER,
+    RATING,
+    GET_LOAI,
+    GET_ROWS_ITEM,
+    SEARCH,
+    CREATE_ITEM,
+    UPDATE_ITEM,
+    DELETE_ITEM,
+    ADD_IMG,
+    ADD_FILE,
+};

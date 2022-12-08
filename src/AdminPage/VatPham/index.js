@@ -226,7 +226,13 @@ function VatPham() {
                     <div style={{ width: '25rem' }}>
                         <span className={clsx(styles.label)}>Hình ảnh sản phẩm</span>
                         <br />
-                        <input style={{ display: 'none' }} type="file" onChange={handleChangeFile} ref={fileInput} />
+                        <input
+                            style={{ display: 'none' }}
+                            name="file"
+                            type="file"
+                            onChange={handleChangeFile}
+                            ref={fileInput}
+                        />
                         <Button
                             onClick={() => fileInput.current.click()}
                             sx={{ width: '10rem', height: '4rem', fontSize: '1.4rem', textTransform: 'capitalize' }}
@@ -239,7 +245,7 @@ function VatPham() {
                 </div>
                 <div className={clsx(styles.action_add, styles.flex_inline)}>
                     <Button
-                        onClick={() => {
+                        onClick={async () => {
                             const add = {
                                 id: rows[rows.length - 1].id + 1,
                                 col1: tenvp,
@@ -263,11 +269,15 @@ function VatPham() {
                                 XUATXU: xuatxu,
                                 COLOR: newcolor,
                                 SIZE: newsize,
+                                TEN_HINHANH: file.name,
                             };
                             setRows(rows.concat([add]));
                             setCreation(creation.concat([create]));
                             setDisLuu(false);
                             handleCloseModalAdd();
+                            let formData = new FormData();
+                            formData.append('file', file);
+                            await Items.ADD_FILE(formData);
                         }}
                         className={clsx(styles.btn_action)}
                         variant="contained"
