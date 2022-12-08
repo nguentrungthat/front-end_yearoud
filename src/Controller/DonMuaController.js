@@ -1,9 +1,7 @@
 import Api from './api';
 
 async function GET() {
-    var body = null;
-    body = await Api.Get('donmuas');
-    return body;
+    return await Api.Get('donmuas');
 }
 
 async function GET_BYID(id) {
@@ -37,4 +35,8 @@ async function GET_BYID(id) {
     return returnBody;
 }
 
-export { GET, GET_BYID };
+async function RATING(body) {
+    return await Api.Post('donmuas/rate', body);
+}
+
+export { GET, GET_BYID, RATING };

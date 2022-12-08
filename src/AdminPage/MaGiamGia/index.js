@@ -1,4 +1,4 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { useEffect, useState, useMemo } from 'react';
 import Button from '@mui/material/Button';
@@ -17,6 +17,7 @@ import Box from '@mui/material/Box';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TextField from '@mui/material/TextField';
 import styles from './MaGiamGia.module.scss';
+import CustomToolbar from '../../components/MiniPart/CustomToolBar';
 
 const MGG = require('../../Controller/MaGiamGiaController');
 
@@ -204,7 +205,7 @@ function MaGiamGia() {
                 }}
                 rows={mgg}
                 columns={columns}
-                components={{ Toolbar: GridToolbar }}
+                components={{ Toolbar: CustomToolbar }}
                 checkboxSelection
                 disableSelectionOnClick
                 onSelectionModelChange={async (newSelectionModel) => {

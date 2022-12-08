@@ -1,4 +1,4 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
@@ -14,6 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Modal from '@mui/material/Modal';
 import styles from './CuaHang.module.scss';
 import { SelectProvince, SelectDistrict, SelectCommune } from 'vn-ad';
+import CustomToolbar from '../../components/MiniPart/CustomToolBar';
 
 const Cuahhangs = require('../../Controller/CuaHangController');
 
@@ -119,7 +120,7 @@ function CuaHang() {
                 sx={{ fontSize: '1.6rem' }}
                 rows={rows}
                 columns={columns}
-                components={{ Toolbar: GridToolbar }}
+                components={{ Toolbar: CustomToolbar }}
                 checkboxSelection
             />
             <Modal open={openModalAdd} onClose={handleCloseModalAdd}>

@@ -20,6 +20,7 @@ export default function Purchase() {
     const [item, setItem] = useState([]);
     const [openRating, setOpenRating] = useState(false);
     const [nhanxet, setNhanxet] = useState('');
+    const [rating, setRating] = useState(5);
 
     const id = localStorage.getItem('id');
 
@@ -147,9 +148,7 @@ export default function Purchase() {
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="1">
                             {purchases}
                         </TabPanel>
-                        <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
-                            {purchases}
-                        </TabPanel>
+                        <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2"></TabPanel>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="3">
                             {purchases}
                         </TabPanel>
@@ -160,7 +159,11 @@ export default function Purchase() {
                 <Box className={clsx(styles.rating)} sx={{ ...styleModal }}>
                     <h2 className={clsx(styles.h1)}>Đánh giá vật phẩm</h2>
                     <span className={clsx(styles.total_label)}>{item[0]?.TEN_VATPHAM}</span>
-                    <Rating sx={{ fontSize: '3rem' }} defaultValue={5} />
+                    <Rating
+                        onChange={(e) => setRating(Number(e.target.value))}
+                        sx={{ fontSize: '3rem' }}
+                        value={rating}
+                    />
                     <TextField
                         className={clsx(styles.textfield)}
                         label="Nhận xét"
@@ -183,7 +186,13 @@ export default function Purchase() {
                                 Close
                             </Button>
                             <Button
-                                onClick={() => {
+                                onClick={async () => {
+                                    await DONMUA.RATING({
+                                        RATING: rating,
+                                        KHACHHANG: Number(id),
+                                        VATPHAM: item[0].VATPHAM,
+                                        NHANXET: nhanxet,
+                                    });
                                     handleCloseRating();
                                 }}
                                 sx={{ fontSize: 16, borderRadius: 23 }}

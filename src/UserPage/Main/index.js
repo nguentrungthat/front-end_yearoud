@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -13,6 +13,7 @@ import cx from 'clsx';
 // import images from '../../assets/images';
 import styles from './Main.module.scss';
 const Items = require('../../Controller/ItemsController');
+const Lazy = require('../../Controller/LazyLoadController');
 const url = 'http://localhost:8081';
 
 function Main() {
@@ -20,13 +21,18 @@ function Main() {
     const [checked, setChecked] = useState([true, true, true, true]);
     const id = localStorage.getItem('id');
 
+    const { search } = useParams();
+
     useEffect(() => {
         async function Get() {
-            if (id) setItems(await Items.OnLoad(id));
+            if (search) setItems(await Items.SEARCH(search));
+            else if (id) setItems(await Items.OnLoad(id));
             else setItems(await Items.OnLoad());
         }
         Get();
-    }, [id]);
+    }, [id, search]);
+
+    Lazy.Lazy(document.getElementsByClassName('obs-cards'));
 
     const handleChange1 = (event) => {
         setChecked([event.target.checked, event.target.checked, event.target.checked, event.target.checked]);
@@ -48,12 +54,19 @@ function Main() {
         <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
             <Card onClick={() => window.scrollTo(0, 0)} className={cx(styles.card)} key={index} sx={{ maxWidth: 400 }}>
                 <CardActionArea>
-                    <CardMedia component="img" height="250" image={url + '/images/' + item.HINHANH} alt="Yearoud" />
+                    <CardMedia
+                        className="obs-cards"
+                        component="img"
+                        height="250"
+                        lazy-src={url + '/images/' + item.HINHANH}
+                        image="../../assets/images/1px.png"
+                        alt="Yearoud"
+                    />
                     <CardContent sx={{ height: 118 }}>
                         <Typography sx={{ color: 'black', fontSize: 16 }}>{item.TEN_VATPHAM}</Typography>
                         <Typography sx={{ color: '#ff1800', fontSize: 20 }}>{item.GIABAN}đ</Typography>
                         <div className={cx(styles.rating)}>
-                            <Rating defaultValue={item.RATING} precision={0.1} readOnly />({item.RATING})
+                            <Rating value={item.RATING} precision={0.1} readOnly />({item.RATING})
                         </div>
                         <i>{item.QUANTITYRATING} lượt đánh giá</i>
                     </CardContent>
@@ -123,12 +136,7 @@ function Main() {
                     />
                 </FormGroup>
             </div>
-            <div className={cx(styles.items_grid)}>
-                {arr}
-                <div className={cx(styles.bottom_content)}>
-                    <button className={cx(styles.load_btn)}>Load More</button>
-                </div>
-            </div>
+            <div className={cx(styles.items_grid)}>{arr}</div>
         </div>
     );
 }

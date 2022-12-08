@@ -51,7 +51,7 @@ export default function Login() {
                     <span className={cx(styles.account)}>Tài khoản</span>
                     <TextField
                         onChange={(event) => setAccount(event.target.value)}
-                        placeholder="Username"
+                        placeholder="Email"
                         variant="outlined"
                     />
                     <div>

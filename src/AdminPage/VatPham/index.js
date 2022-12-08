@@ -1,4 +1,4 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { useEffect, useState, forwardRef, useRef } from 'react';
 import Button from '@mui/material/Button';
@@ -16,6 +16,7 @@ import Breadcrumbs from '@mui/material/Breadcrumbs';
 import Link from '@mui/material/Link';
 import styles from './VatPham.module.scss';
 import SelectBox from '../../components/MiniPart/SelectBox';
+import CustomToolbar from '../../components/MiniPart/CustomToolBar';
 const Items = require('../../Controller/ItemsController');
 const STORE = require('../../Controller/CuaHangController');
 
@@ -30,6 +31,9 @@ function VatPham() {
     const [giaban, setGiaban] = useState(0);
     const [soluong, setSoluong] = useState(0);
     const [mota, setMota] = useState('');
+    const [newsize, setNewSize] = useState('');
+    const [newcolor, setNewColor] = useState('');
+    const [xuatxu, setXuatXu] = useState('');
     const [rows, setRows] = useState([]);
     const [creation, setCreation] = useState([]);
     const [deletion, setDeletion] = useState([]);
@@ -72,13 +76,16 @@ function VatPham() {
 
     var columns = [
         { field: 'id' },
-        { field: 'col1', headerName: 'Tên Vật Phẩm', width: 350, editable: true },
-        { field: 'col2', headerName: 'Giá Bán', width: 130, editable: true },
-        { field: 'col3', headerName: 'SL Tồn Kho', width: 100, editable: true },
-        { field: 'col4', headerName: 'SL Đã Bán', width: 100, editable: true },
-        { field: 'col5', headerName: 'Tên Cửa Hàng', width: 200 },
+        { field: 'col1', headerName: 'Tên Vật Phẩm', width: 200, editable: true },
+        { field: 'col2', headerName: 'Giá Bán', width: 100, editable: true, align: 'right', headerAlign: 'right' },
+        { field: 'col3', headerName: 'SL Tồn Kho', width: 100, editable: true, align: 'right' },
+        { field: 'col4', headerName: 'SL Đã Bán', width: 100, editable: true, align: 'right' },
+        { field: 'col5', headerName: 'Tên Cửa Hàng', width: 170 },
         { field: 'col6', headerName: 'Loại', width: 100 },
-        { field: 'col7', headerName: 'Mô tả', width: 150, editable: true },
+        { field: 'col7', headerName: 'Kích thước', width: 150, editable: true },
+        { field: 'col8', headerName: 'Mùa sắc', width: 150, editable: true },
+        { field: 'col9', headerName: 'Xuất xứ', width: 150, editable: true },
+        { field: 'col10', headerName: 'Mô tả', width: 150, editable: true },
     ];
 
     const styleModal = {
@@ -124,6 +131,7 @@ function VatPham() {
                             onChange={(e) => setTenvp(e.target.value)}
                             label="Tên vật phẩm"
                             variant="outlined"
+                            spellCheck={false}
                         />
                     </div>
                     <div>
@@ -137,30 +145,31 @@ function VatPham() {
                         />
                     </div>
                 </div>
-
                 <div className={clsx(styles.flex_inline)}>
                     <div>
                         <span className={clsx(styles.label)}>Kích Thước</span>
                         <br />
                         <TextField
-                            onChange={(e) => setSoluong(e.target.value)}
+                            onChange={(e) => setNewSize(e.target.value)}
                             sx={{ width: '25rem' }}
                             label="Kích thước"
                             variant="outlined"
                             placeholder="S, M, L,..."
+                            spellCheck={false}
                         />
                     </div>
                     <div>
                         <span className={clsx(styles.label)}>Màu Sắc</span>
                         <br />
                         <TextField
-                            onChange={(e) => setMota(e.target.value)}
+                            onChange={(e) => setNewColor(e.target.value)}
                             multiline
                             sx={{ width: '25rem' }}
                             maxRows={10}
                             label="Màu sắc"
                             variant="outlined"
                             placeholder="Trắng, Đen,..."
+                            spellCheck={false}
                         />
                     </div>
                 </div>
@@ -184,6 +193,7 @@ function VatPham() {
                             onChange={(e) => setSoluong(e.target.value)}
                             sx={{ width: '25rem' }}
                             label="Số lượng trong kho"
+                            spellCheck={false}
                             variant="outlined"
                         />
                     </div>
@@ -195,6 +205,7 @@ function VatPham() {
                             multiline
                             sx={{ width: '25rem' }}
                             maxRows={10}
+                            spellCheck={false}
                             label="Mô tả"
                             variant="outlined"
                         />
@@ -205,9 +216,10 @@ function VatPham() {
                         <span className={clsx(styles.label)}>Xuất Xứ</span>
                         <br />
                         <TextField
-                            onChange={(e) => setSoluong(e.target.value)}
+                            onChange={(e) => setXuatXu(e.target.value)}
                             sx={{ width: '25rem' }}
                             label="Xuất xứ"
+                            spellCheck={false}
                             variant="outlined"
                         />
                     </div>
@@ -225,7 +237,6 @@ function VatPham() {
                         <span className={clsx(styles.text_format)}>{file.name}</span>
                     </div>
                 </div>
-
                 <div className={clsx(styles.action_add, styles.flex_inline)}>
                     <Button
                         onClick={() => {
@@ -237,7 +248,10 @@ function VatPham() {
                                 col4: 0,
                                 col5: store.props.children[1].props.value,
                                 col6: loai.props.children[1].props.id,
-                                col7: mota,
+                                col7: newsize,
+                                col8: newcolor,
+                                col9: xuatxu,
+                                col10: mota,
                             };
                             const create = {
                                 TEN_VATPHAM: tenvp,
@@ -246,6 +260,9 @@ function VatPham() {
                                 CUAHANG: Number(store.props.children[1].props.id),
                                 MOTA_VATPHAM: mota,
                                 LOAI: loai.props.children[1].props.id,
+                                XUATXU: xuatxu,
+                                COLOR: newcolor,
+                                SIZE: newsize,
                             };
                             setRows(rows.concat([add]));
                             setCreation(creation.concat([create]));
@@ -278,8 +295,8 @@ function VatPham() {
 
     const alert = (
         <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
-            <Alert onClose={handleCloseAlert} severity="success" sx={{ width: '100%' }}>
-                This is a success message!
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ fontSize: '1.4rem', width: '100%' }}>
+                Thay đổi thành công!
             </Alert>
         </Snackbar>
     );
@@ -316,7 +333,7 @@ function VatPham() {
                             await Items.UPDATE_ITEM(update);
                             setUpdate([]);
                         }
-                        setDisLuu(false);
+                        setDisLuu(true);
                         handleOpenAlert();
                     }}
                     disabled={disLuu}
@@ -358,7 +375,7 @@ function VatPham() {
                 sx={{ fontSize: '1.6rem' }}
                 rows={rows}
                 columns={columns}
-                components={{ Toolbar: GridToolbar }}
+                components={{ Toolbar: CustomToolbar }}
                 checkboxSelection
                 disableSelectionOnClick
                 onSelectionModelChange={async (newSelectionModel) => {

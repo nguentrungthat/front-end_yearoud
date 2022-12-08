@@ -172,7 +172,11 @@ function ItemDetails() {
         <div className={cx(styles.list_rating)} key={rate.ID_RATING}>
             {rate.TEN_KHACHHANG}
             <br />
-            <Rating size="large" key={rate.ID_RATING} defaultValue={rate?.RATING} readOnly />
+            <Rating size="large" key={rate.ID_RATING} value={rate?.RATING} readOnly />
+            <br />
+            <div className={cx(styles.nhanxet)}>
+                <i>{rate.NHANXET}</i>
+            </div>
         </div>
     ));
 
@@ -371,7 +375,9 @@ function ItemDetails() {
                             </TabList>
                         </Box>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
-                            Mô tả sản phẩm
+                            - Size vật phẩm:<span className={cx(styles.weight_600)}> {item[0]?.SIZE}</span> <br />- Màu
+                            sắc vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.COLOR}</span> <br />- Xuất
+                            xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span>
                         </TabPanel>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="1">
                             - Size vật phẩm:<span className={cx(styles.weight_600)}> {item[0]?.SIZE}</span> <br />- Màu

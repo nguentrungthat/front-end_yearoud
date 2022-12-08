@@ -18,6 +18,7 @@ import Purchase from '../UserPage/Information/Purchase';
 
 const publicRoutes = [
     { path: '/', component: Home, layout: User },
+    { path: '/:search', component: Home, layout: User },
     { path: '/login', component: LoginForm, layout: Login },
     { path: '/signup', component: SignUpForm, layout: Login },
     { path: '/details/:idItem', component: Details, layout: User },

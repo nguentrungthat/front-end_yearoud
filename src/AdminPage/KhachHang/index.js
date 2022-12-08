@@ -1,4 +1,4 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
@@ -21,6 +21,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import styles from './KhachHang.module.scss';
+import CustomToolbar from '../../components/MiniPart/CustomToolBar';
 
 const Khachhangs = require('../../Controller/KhachHangController');
 
@@ -160,7 +161,7 @@ function KhachHang() {
                 }}
                 rows={rows}
                 columns={columns}
-                components={{ Toolbar: GridToolbar }}
+                components={{ Toolbar: CustomToolbar }}
                 checkboxSelection
                 disableSelectionOnClick
                 onSelectionModelChange={async (newSelectionModel) => {

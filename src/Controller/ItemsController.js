@@ -25,7 +25,10 @@ async function GET_ROWS_ITEM() {
             col4: item.SOLUONG_DABAN,
             col5: item.TEN_STORE,
             col6: item.LOAI,
-            col7: item.MOTA_VATPHAM,
+            col7: item.SIZE,
+            col8: item.COLOR,
+            col9: item.XUATXU,
+            col10: item.MOTA_VATPHAM,
         };
         arrRows.push(row);
     }
@@ -160,7 +163,26 @@ async function UPDATE_ITEM(data) {
 }
 
 async function SEARCH(str) {
-    return await Api.Post('items/search', { SEARCH: str });
+    let body = await Api.Post('items/search', { SEARCH: str });
+    for (const elm of body) {
+        let itemImg = await Api.Post('items/images/', { ID_VATPHAM: elm?.ID_VATPHAM });
+        elm.HINHANH = itemImg[0].TEN_HINHANH;
+    }
+    const ratings = await RATING();
+    for (const item of body) {
+        let value = 0;
+        let quantityRating = 0;
+        for (const rating of ratings) {
+            if (rating.ID_VATPHAM === item.ID_VATPHAM) {
+                value = rating.RATING;
+                quantityRating = rating.QUANTITY;
+            }
+        }
+        item.RATING = value;
+        item.QUANTITYRATING = quantityRating;
+    }
+    body = SORT_RATING(body);
+    return body;
 }
 
 export { GET, OnLoad, POST_ITEM, USER, RATING, GET_LOAI, GET_ROWS_ITEM, SEARCH, CREATE_ITEM, UPDATE_ITEM, DELETE_ITEM };

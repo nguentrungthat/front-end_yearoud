@@ -60,4 +60,8 @@ async function DELETE(body) {
     return await Api.Post('khachhangs/delete', body);
 }
 
-export { GET, GET_KH, GET_ACCOUNT, CHANGE_PASS, PASS, CREATE, UPDATE, DELETE, GET_ROWS };
+async function CREATE_ACCOUNT(body) {
+    return await Api.Post('khachhangs/create_account', body);
+}
+
+export { GET, GET_KH, GET_ACCOUNT, CHANGE_PASS, PASS, CREATE, UPDATE, DELETE, GET_ROWS, CREATE_ACCOUNT };

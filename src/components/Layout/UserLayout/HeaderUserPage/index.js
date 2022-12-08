@@ -25,7 +25,6 @@ function Header() {
     const [open, setOpen] = useState(false);
     const [cart, setCart] = useState(0);
     const [search, setSearch] = useState('');
-    // const [searchItem, setSearchItem] = useState([]);
 
     const id = localStorage.getItem('id');
 
@@ -160,14 +159,11 @@ function Header() {
                         <button className={cx(styles.search_btn_clear)} onClick={() => setSearch('')}>
                             <FontAwesomeIcon icon={faCircleXmark} />
                         </button>
-                        <button
-                            className={cx(styles.search_btn)}
-                            // onClick={async () => {
-                            //     setSearchItem(await Items.SEARCH(search));
-                            // }}
-                        >
-                            <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        </button>
+                        <Link className={cx(styles.link)} to={`/${search}`}>
+                            <button className={cx(styles.search_btn)}>
+                                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                            </button>
+                        </Link>
                     </div>
                     {userLogin}
                 </div>
