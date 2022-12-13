@@ -41,9 +41,15 @@ function Information() {
 
     const fileInput = useRef(null);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(name, email, sdt, gender, date);
+        await KH.UPDATE({
+            ID_KHACHHANG: id,
+            TEN_KHACHHANG: name,
+            SDT: sdt,
+            GIOITINH: gender,
+            NGAYSINH: date,
+        });
     };
     const handleChangeFile = (event) => {
         const url = event.target.files[0];
@@ -80,6 +86,8 @@ function Information() {
                         <div className={clsx(styles.left)}>E-mail</div>
                         <div className={clsx(styles.right)}>
                             <input
+                                style={{ backgroundColor: '#ebebeb' }}
+                                readOnly
                                 className={clsx(styles.input)}
                                 type="text"
                                 value={email}

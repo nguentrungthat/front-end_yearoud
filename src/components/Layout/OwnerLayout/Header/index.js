@@ -67,7 +67,10 @@ function Header() {
                                 <Collapse in={open} timeout="auto" unmountOnExit>
                                     <List component="div" disablePadding>
                                         <ListItemButton
-                                            onClick={() => window.location.replace('http://localhost:3000/')}
+                                            onClick={() => {
+                                                localStorage.removeItem('id');
+                                                window.location.replace('http://localhost:3000/');
+                                            }}
                                             sx={{ pl: 4 }}
                                         >
                                             <ListItemText primary="Đăng xuất" />

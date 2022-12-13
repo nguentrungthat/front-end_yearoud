@@ -14,7 +14,7 @@ async function GET_BYID(id) {
     }
     let donmua = [];
     let flag = true;
-    for (let i = 0; i < body.length - 1; i++) {
+    for (let i = 0; i < body.length; i++) {
         let arr = [];
         for (let dm of donmua) {
             if (dm === body[i].DONMUA) flag = false;

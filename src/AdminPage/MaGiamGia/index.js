@@ -43,8 +43,6 @@ function MaGiamGia() {
     useEffect(() => {
         async function Get() {
             setMGG((await MGG.GET())[0]);
-            setDisXoa(true);
-            setDisLuu(true);
         }
         Get();
     }, []);

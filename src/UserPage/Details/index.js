@@ -332,7 +332,7 @@ function ItemDetails() {
                             sx={{ fontSize: 16, borderRadius: 23 }}
                             variant="contained"
                         >
-                            ADD TO CART
+                            Thêm giỏ hàng
                         </Button>
                     </div>
                     <div className={cx(styles.flex_center)}>
@@ -378,12 +378,14 @@ function ItemDetails() {
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="2">
                             - Size vật phẩm:<span className={cx(styles.weight_600)}> {item[0]?.SIZE}</span> <br />- Màu
                             sắc vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.COLOR}</span> <br />- Xuất
-                            xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span>
+                            xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span> <br />- Cửa
+                            hàng: <span className={cx(styles.weight_600)}> {item[0]?.TEN_STORE}</span>
                         </TabPanel>
                         <TabPanel sx={{ fontFamily: 'Poppins-Regular' }} value="1">
                             - Size vật phẩm:<span className={cx(styles.weight_600)}> {item[0]?.SIZE}</span> <br />- Màu
                             sắc vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.COLOR}</span> <br />- Xuất
-                            xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span>
+                            xứ vật phẩm: <span className={cx(styles.weight_600)}> {item[0]?.XUATXU}</span> <br />- Cửa
+                            hàng: <span className={cx(styles.weight_600)}> {item[0]?.TEN_STORE}</span>
                         </TabPanel>
                         <TabPanel value="3">
                             <div className={cx(styles.list_ratings)}>{list}</div>

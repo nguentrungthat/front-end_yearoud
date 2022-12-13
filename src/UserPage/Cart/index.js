@@ -128,6 +128,7 @@ function Cart() {
             NGAYGIAO: data.data.expected_delivery_time.slice(0, 10),
             VATPHAM: arrItems,
             ORDER_CODE: data.data.order_code,
+            GIAMGIA: Number(-coupon.GIATRI_GIAM * tongtien),
         };
         await ShopCart.ADD(body);
         setFee(0);
@@ -356,6 +357,7 @@ function Cart() {
                             const today = new Date().toISOString();
                             if (today > code[0].TG_BATDAU && today < code[0].TG_KETTHUC && code[0].ACTIVE === 1)
                                 setCoupon(code[0]);
+                            setTongtien(tien_tamtinh + fee - code[0]?.GIATRI_GIAM * tien_tamtinh);
                         }}
                         sx={{ fontSize: 16, borderRadius: 23 }}
                         variant="contained"
