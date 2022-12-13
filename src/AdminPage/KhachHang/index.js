@@ -1,6 +1,6 @@
 import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import Button from '@mui/material/Button';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import AddIcon from '@mui/icons-material/Add';
@@ -20,6 +20,8 @@ import FormLabel from '@mui/material/FormLabel';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import styles from './KhachHang.module.scss';
 import CustomToolbar from '../../components/MiniPart/CustomToolBar';
 
@@ -39,6 +41,7 @@ function KhachHang() {
     const [creation, setCreation] = useState([]);
     const [deletion, setDeletion] = useState([]);
     const [update, setUpdate] = useState([]);
+    const [openAlert, setOpenAlert] = useState(false);
     const [selectionModel, setSelectionModel] = useState([]);
 
     useEffect(() => {
@@ -51,6 +54,8 @@ function KhachHang() {
     const handleChangeRadio = (event) => {
         setCheckRadio(event.target.value);
     };
+    const handleOpenAlert = () => setOpenAlert(true);
+    const handleCloseAlert = () => setOpenAlert(false);
     const handleOpenModalAdd = () => setOpenModalAdd(true);
     const handleCloseModalAdd = () => setOpenModalAdd(false);
     const handleDelete = () => {
@@ -90,6 +95,19 @@ function KhachHang() {
         { field: 'col5', headerName: 'Địa Chỉ', width: 200, editable: true },
         { field: 'col6', headerName: 'E-mail', width: 200, editable: true },
     ];
+
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const alert = (
+        <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ fontSize: '1.4rem', width: '100%' }}>
+                Thay đổi thành công!
+            </Alert>
+        </Snackbar>
+    );
+
     return (
         <div className={clsx(styles.table_container)}>
             <div className={clsx(styles.breadcrumbs)}>
@@ -121,6 +139,7 @@ function KhachHang() {
                             setDeletion([]);
                         }
                         setDisLuu(true);
+                        handleOpenAlert();
                     }}
                     disabled={disLuu}
                     className={clsx(styles.btn_action)}
@@ -336,6 +355,7 @@ function KhachHang() {
                     </div>
                 </Box>
             </Modal>
+            {alert}
         </div>
     );
 }

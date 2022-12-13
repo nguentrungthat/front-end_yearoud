@@ -36,4 +36,8 @@ async function DELETE(body) {
     return await Api.Post('magiamgia/delete', body);
 }
 
-export { GET, CREATE, DELETE, UPDATE };
+async function GET_MGG(body) {
+    return await Api.Post('magiamgia/mgg', body);
+}
+
+export { GET, CREATE, DELETE, UPDATE, GET_MGG };

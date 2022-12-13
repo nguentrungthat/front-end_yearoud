@@ -12,25 +12,50 @@ async function GET_LOAI() {
     return body;
 }
 
-async function GET_ROWS_ITEM() {
-    var body = null;
-    body = await Api.Get('items');
-    var arrRows = [];
-    for (const item of body) {
-        var row = {
-            id: item.ID_VATPHAM,
-            col1: item.TEN_VATPHAM,
-            col2: item.GIABAN.toLocaleString('en-US'),
-            col3: item.SOLUONG_TONKHO,
-            col4: item.SOLUONG_DABAN,
-            col5: item.TEN_STORE,
-            col6: item.LOAI,
-            col7: item.SIZE,
-            col8: item.COLOR,
-            col9: item.XUATXU,
-            col10: item.MOTA_VATPHAM,
-        };
-        arrRows.push(row);
+async function GET_ROWS_ITEM(id) {
+    let body = null;
+    let arrRows = [];
+    if (id) {
+        body = await Api.Post('items', { ID_KHACHHANG: id });
+        for (const item of body) {
+            let trangthai = 'Đang xét duyệt';
+            if (item.STATUS === 1) trangthai = 'Đã xét duyệt';
+            let row = {
+                id: item.ID_VATPHAM,
+                col1: item.TEN_VATPHAM,
+                col2: item.GIABAN.toLocaleString('en-US'),
+                col3: item.SOLUONG_TONKHO,
+                col4: item.SOLUONG_DABAN,
+                col5: item.LOAI,
+                col6: item.SIZE,
+                col7: item.COLOR,
+                col8: item.XUATXU,
+                col9: item.MOTA_VATPHAM,
+                col10: trangthai,
+            };
+            arrRows.push(row);
+        }
+    } else {
+        body = await Api.Get('items');
+        for (const item of body) {
+            let trangthai = 'Chờ xét duyệt';
+            if (item.STATUS === 1) trangthai = 'Đã xét duyệt';
+            let row = {
+                id: item.ID_VATPHAM,
+                col1: item.TEN_VATPHAM,
+                col2: item.GIABAN.toLocaleString('en-US'),
+                col3: item.SOLUONG_TONKHO,
+                col4: item.SOLUONG_DABAN,
+                col5: item.TEN_STORE,
+                col6: item.LOAI,
+                col7: item.SIZE,
+                col8: item.COLOR,
+                col9: item.XUATXU,
+                col10: item.MOTA_VATPHAM,
+                col11: trangthai,
+            };
+            arrRows.push(row);
+        }
     }
     return arrRows;
 }
@@ -61,6 +86,7 @@ async function OnLoad(id) {
             item.RATING = value;
             item.QUANTITYRATING = quantityRating;
         }
+
         body = SORT_RATING(body);
         //rating recommend
         for (const item of rec) {
@@ -193,6 +219,14 @@ async function ADD_IMG(body) {
     return await Api.Post('items/add_img', body);
 }
 
+async function RATED(id) {
+    return await Api.Post('rating/rated', { ID_KHACHHANG: id });
+}
+
+async function XET_DUYET(data) {
+    return await Api.Post('items/xetduyet', data);
+}
+
 export {
     GET,
     OnLoad,
@@ -207,4 +241,6 @@ export {
     DELETE_ITEM,
     ADD_IMG,
     ADD_FILE,
+    RATED,
+    XET_DUYET,
 };

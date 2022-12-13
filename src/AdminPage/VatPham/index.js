@@ -1,14 +1,10 @@
 import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
-import { useEffect, useState, forwardRef, useRef } from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
-import Box from '@mui/material/Box';
+import PriceCheckIcon from '@mui/icons-material/PriceCheck';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import CloseIcon from '@mui/icons-material/Close';
-import Modal from '@mui/material/Modal';
-import TextField from '@mui/material/TextField';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Typography from '@mui/material/Typography';
@@ -23,23 +19,15 @@ const STORE = require('../../Controller/CuaHangController');
 function VatPham() {
     const [disLuu, setDisLuu] = useState(true);
     const [disXoa, setDisXoa] = useState(true);
+    const [disXetDuyet, setDisXetDuyet] = useState(true);
     const [stores, setStores] = useState([]);
     const [loais, setLoais] = useState([]);
-    const [openModalAdd, setOpenModalAdd] = useState(false);
     const [openAlert, setOpenAlert] = useState(false);
-    const [tenvp, setTenvp] = useState('');
-    const [giaban, setGiaban] = useState(0);
-    const [soluong, setSoluong] = useState(0);
-    const [mota, setMota] = useState('');
-    const [newsize, setNewSize] = useState('');
-    const [newcolor, setNewColor] = useState('');
-    const [xuatxu, setXuatXu] = useState('');
     const [rows, setRows] = useState([]);
-    const [creation, setCreation] = useState([]);
+    const [xetDuyet, setXetDuyet] = useState([]);
     const [deletion, setDeletion] = useState([]);
     const [update, setUpdate] = useState([]);
     const [selectionModel, setSelectionModel] = useState([]);
-    const [file, setFile] = useState({});
 
     useEffect(() => {
         async function Get() {
@@ -51,10 +39,6 @@ function VatPham() {
         Get();
     }, []);
 
-    const fileInput = useRef(null);
-
-    const handleOpenModalAdd = () => setOpenModalAdd(true);
-    const handleCloseModalAdd = () => setOpenModalAdd(false);
     const handleOpenAlert = () => setOpenAlert(true);
     const handleCloseAlert = () => setOpenAlert(false);
     const handleDelete = () => {
@@ -68,14 +52,21 @@ function VatPham() {
         setRows(table);
         setDisLuu(false);
     };
-    const handleChangeFile = (event) => {
-        const url = event.target.files[0];
-        url.review = URL.createObjectURL(url);
-        setFile(url);
+    const handleXetDuyet = () => {
+        const table = [...rows];
+        setXetDuyet(selectionModel);
+        for (const ID of selectionModel) {
+            for (let i = 0; i < table.length; i++) {
+                if (table[i].id === ID) table[i].col11 = 'Đã xét duyệt';
+            }
+        }
+        setRows(table);
+        setDisLuu(false);
     };
 
     var columns = [
         { field: 'id' },
+        { field: 'col11', headerName: 'Trang thái', width: 150 },
         { field: 'col1', headerName: 'Tên Vật Phẩm', width: 200, editable: true },
         { field: 'col2', headerName: 'Giá Bán', width: 100, editable: true, align: 'right', headerAlign: 'right' },
         { field: 'col3', headerName: 'SL Tồn Kho', width: 100, editable: true, align: 'right' },
@@ -88,21 +79,6 @@ function VatPham() {
         { field: 'col10', headerName: 'Mô tả', width: 150, editable: true },
     ];
 
-    const styleModal = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        width: '60rem',
-        height: '60rem',
-        transform: 'translate(-50%, -50%)',
-        bgcolor: 'background.paper',
-        border: '2px solid #000',
-        boxShadow: 24,
-        p: 4,
-        display: 'flex',
-        justifyContent: 'space-between',
-        flexDirection: 'column',
-    };
     var arrStore = [];
     for (const value of stores) {
         arrStore.push({ ID: value?.ID_STORE, VALUE: value?.TEN_STORE });
@@ -117,187 +93,6 @@ function VatPham() {
     if (!store || !loai) {
         return;
     }
-
-    const modal = (
-        <Modal open={openModalAdd} onClose={handleCloseModalAdd}>
-            <Box sx={styleModal}>
-                <span className={clsx(styles.title_modal)}>Thêm Vật Phẩm</span>
-                <div className={clsx(styles.flex_inline)}>
-                    <div>
-                        <span className={clsx(styles.label)}>Tên vật phẩm</span>
-                        <br />
-                        <TextField
-                            sx={{ width: '35rem' }}
-                            onChange={(e) => setTenvp(e.target.value)}
-                            label="Tên vật phẩm"
-                            variant="outlined"
-                            spellCheck={false}
-                        />
-                    </div>
-                    <div>
-                        <span className={clsx(styles.label)}>Giá bán</span>
-                        <br />
-                        <TextField
-                            sx={{ width: '15rem' }}
-                            onChange={(e) => setGiaban(e.target.value)}
-                            label="Giá bán (VNĐ)"
-                            variant="outlined"
-                        />
-                    </div>
-                </div>
-                <div className={clsx(styles.flex_inline)}>
-                    <div>
-                        <span className={clsx(styles.label)}>Kích Thước</span>
-                        <br />
-                        <TextField
-                            onChange={(e) => setNewSize(e.target.value)}
-                            sx={{ width: '25rem' }}
-                            label="Kích thước"
-                            variant="outlined"
-                            placeholder="S, M, L,..."
-                            spellCheck={false}
-                        />
-                    </div>
-                    <div>
-                        <span className={clsx(styles.label)}>Màu Sắc</span>
-                        <br />
-                        <TextField
-                            onChange={(e) => setNewColor(e.target.value)}
-                            multiline
-                            sx={{ width: '25rem' }}
-                            maxRows={10}
-                            label="Màu sắc"
-                            variant="outlined"
-                            placeholder="Trắng, Đen,..."
-                            spellCheck={false}
-                        />
-                    </div>
-                </div>
-                <div className={clsx(styles.flex_inline)}>
-                    <div>
-                        <span className={clsx(styles.label)}>Thuộc cửa hàng</span>
-                        <br />
-                        {store}
-                    </div>
-                    <div>
-                        <span className={clsx(styles.label)}>Thuộc loại</span>
-                        <br />
-                        {loai}
-                    </div>
-                </div>
-                <div className={clsx(styles.flex_inline)}>
-                    <div>
-                        <span className={clsx(styles.label)}>Số lượng trong kho</span>
-                        <br />
-                        <TextField
-                            onChange={(e) => setSoluong(e.target.value)}
-                            sx={{ width: '25rem' }}
-                            label="Số lượng trong kho"
-                            spellCheck={false}
-                            variant="outlined"
-                        />
-                    </div>
-                    <div>
-                        <span className={clsx(styles.label)}>Mô tả</span>
-                        <br />
-                        <TextField
-                            onChange={(e) => setMota(e.target.value)}
-                            multiline
-                            sx={{ width: '25rem' }}
-                            maxRows={10}
-                            spellCheck={false}
-                            label="Mô tả"
-                            variant="outlined"
-                        />
-                    </div>
-                </div>
-                <div className={clsx(styles.flex_inline)}>
-                    <div>
-                        <span className={clsx(styles.label)}>Xuất Xứ</span>
-                        <br />
-                        <TextField
-                            onChange={(e) => setXuatXu(e.target.value)}
-                            sx={{ width: '25rem' }}
-                            label="Xuất xứ"
-                            spellCheck={false}
-                            variant="outlined"
-                        />
-                    </div>
-                    <div style={{ width: '25rem' }}>
-                        <span className={clsx(styles.label)}>Hình ảnh sản phẩm</span>
-                        <br />
-                        <input
-                            style={{ display: 'none' }}
-                            name="file"
-                            type="file"
-                            onChange={handleChangeFile}
-                            ref={fileInput}
-                        />
-                        <Button
-                            onClick={() => fileInput.current.click()}
-                            sx={{ width: '10rem', height: '4rem', fontSize: '1.4rem', textTransform: 'capitalize' }}
-                            variant="outlined"
-                        >
-                            Chọn ảnh
-                        </Button>
-                        <span className={clsx(styles.text_format)}>{file.name}</span>
-                    </div>
-                </div>
-                <div className={clsx(styles.action_add, styles.flex_inline)}>
-                    <Button
-                        onClick={async () => {
-                            const add = {
-                                id: rows[rows.length - 1].id + 1,
-                                col1: tenvp,
-                                col2: giaban,
-                                col3: soluong,
-                                col4: 0,
-                                col5: store.props.children[1].props.value,
-                                col6: loai.props.children[1].props.id,
-                                col7: newsize,
-                                col8: newcolor,
-                                col9: xuatxu,
-                                col10: mota,
-                            };
-                            const create = {
-                                TEN_VATPHAM: tenvp,
-                                GIABAN: Number(giaban),
-                                SOLUONG_TONKHO: Number(soluong),
-                                CUAHANG: Number(store.props.children[1].props.id),
-                                MOTA_VATPHAM: mota,
-                                LOAI: loai.props.children[1].props.id,
-                                XUATXU: xuatxu,
-                                COLOR: newcolor,
-                                SIZE: newsize,
-                                TEN_HINHANH: file.name,
-                            };
-                            setRows(rows.concat([add]));
-                            setCreation(creation.concat([create]));
-                            setDisLuu(false);
-                            handleCloseModalAdd();
-                            let formData = new FormData();
-                            formData.append('file', file);
-                            await Items.ADD_FILE(formData);
-                        }}
-                        className={clsx(styles.btn_action)}
-                        variant="contained"
-                    >
-                        <SaveIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
-                        Thêm
-                    </Button>
-                    <Button
-                        onClick={handleCloseModalAdd}
-                        className={clsx(styles.btn_action)}
-                        sx={{ mr: '1rem', bgcolor: '#d12525' }}
-                        variant="contained"
-                    >
-                        <CloseIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
-                        Hủy
-                    </Button>
-                </div>
-            </Box>
-        </Modal>
-    );
 
     const Alert = forwardRef(function Alert(props, ref) {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -327,13 +122,12 @@ function VatPham() {
                 <p>Danh Sách Vật Phẩm</p>
             </div>
             <div className={clsx(styles.actions)}>
-                {modal}
                 {alert}
                 <Button
                     onClick={async () => {
-                        if (creation.length > 0) {
-                            await Items.CREATE_ITEM(creation);
-                            setCreation([]);
+                        if (xetDuyet.length > 0) {
+                            await Items.XET_DUYET(xetDuyet);
+                            setXetDuyet([]);
                         }
                         if (deletion.length > 0) {
                             await Items.DELETE_ITEM(deletion);
@@ -364,13 +158,14 @@ function VatPham() {
                     Xóa
                 </Button>
                 <Button
-                    onClick={handleOpenModalAdd}
+                    disabled={disXetDuyet}
+                    onClick={handleXetDuyet}
                     className={clsx(styles.btn_action)}
                     variant="contained"
-                    sx={{ mr: '1rem', bgcolor: '#5ab249' }}
+                    sx={{ width: '10rem', mr: '1rem', bgcolor: '#5ab249' }}
                 >
-                    <AddIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
-                    Thêm
+                    <PriceCheckIcon sx={{ mr: '1rem', fontSize: '1.6rem' }} />
+                    Duyệt
                 </Button>
             </div>
             <DataGrid
@@ -392,8 +187,10 @@ function VatPham() {
                     setSelectionModel(newSelectionModel);
                     if (newSelectionModel.length > 0) {
                         setDisXoa(false);
+                        setDisXetDuyet(false);
                     } else {
                         setDisXoa(true);
+                        setDisXetDuyet(true);
                     }
                 }}
                 selectionModel={selectionModel}

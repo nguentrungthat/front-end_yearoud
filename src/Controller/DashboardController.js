@@ -6,21 +6,24 @@ async function GET() {
     return body;
 }
 
-async function GET_TOP_VATPHAM() {
+async function GET_TOP_VATPHAM(id) {
     var body = null;
-    body = await Api.Get('dashboards/topsanpham');
+    if (id) body = await Api.Post('dashboards/topsanpham', { ID_KHACHHANG: id });
+    else body = await Api.Get('dashboards/topsanpham');
     return body;
 }
 
-async function GET_TOP_DONMUA() {
+async function GET_TOP_DONMUA(id) {
     var body = null;
-    body = await Api.Get('dashboards/topdonmua');
+    if (id) body = await Api.Post('dashboards/topdonmua', { ID_KHACHHANG: id });
+    else body = await Api.Get('dashboards/topdonmua');
     return body;
 }
 
-async function GET_DOANHTHU() {
+async function GET_DOANHTHU(id) {
     var body = null;
-    body = await Api.Get('dashboards/doanhthu');
+    if (id) body = await Api.Post('dashboards/doanhthu', { ID_KHACHHANG: id });
+    else body = await Api.Get('dashboards/doanhthu');
     return body;
 }
 
@@ -30,9 +33,10 @@ async function GET_KHACHHANG() {
     return body;
 }
 
-async function GET_DONMUA() {
+async function GET_DONMUA(id) {
     var body = null;
-    body = await Api.Get('dashboards/donmua');
+    if (id) body = await Api.Post('dashboards/donmua', { ID_KHACHHANG: id });
+    else body = await Api.Get('dashboards/donmua');
     return body;
 }
 

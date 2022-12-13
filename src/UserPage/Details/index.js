@@ -56,7 +56,8 @@ function ItemDetails() {
         async function Get() {
             setItem(await Details.Load(idItem));
             setImgItem(await Details.Images(idItem));
-            setRelateItem(await Items.OnLoad(id));
+            if (await Items.RATED(id)) setRelateItem(await Items.OnLoad(id));
+            else setRelateItem(await Items.OnLoad());
             setRating(await Details.RATING(idItem));
             setRatings(await Details.RATING());
             setListRatings(await Details.LIST_RATING(idItem));
@@ -114,7 +115,7 @@ function ItemDetails() {
     };
     const handleLeftRelate = () => {
         if (indexRelate > 5) return setIndexRelate(indexRelate - 6);
-        return setIndexLoai(imgRelateItem.length - 7);
+        return setIndexRelate(imgRelateItem.length - 7);
     };
 
     const styleModal = {
@@ -316,7 +317,7 @@ function ItemDetails() {
                                 <Button
                                     onClick={() => {
                                         handleClose();
-                                        // window.location.replace(`http://localhost:3000/details/${idItem}`);
+                                        window.location.replace(`http://localhost:3000/details/${idItem}`);
                                     }}
                                     sx={{ fontSize: 16, borderRadius: 23 }}
                                     variant="outlined"
@@ -393,11 +394,11 @@ function ItemDetails() {
             <div className={cx(styles.related)}>
                 <h3 className={styles.h3_related}>Sản phẩm tương tự</h3>
                 <div className={cx(styles.related_item)}>
-                    <IconButton onClick={handleLeftLoai}>
+                    <IconButton sx={{ mr: '-2rem' }} onClick={handleLeftLoai}>
                         <ArrowCircleLeftIcon sx={{ width: '4rem', height: '4rem' }} />
                     </IconButton>
                     {arrLoai}
-                    <IconButton onClick={handleRightLoai}>
+                    <IconButton sx={{ ml: '-2rem' }} onClick={handleRightLoai}>
                         <ArrowCircleRightIcon sx={{ width: '4rem', height: '4rem' }} />
                     </IconButton>
                 </div>
@@ -405,11 +406,11 @@ function ItemDetails() {
             <div className={cx(styles.related)}>
                 <h3 className={styles.h3_related}>Có thể bạn sẽ thích</h3>
                 <div className={cx(styles.related_item)}>
-                    <IconButton onClick={handleLeftRelate}>
+                    <IconButton sx={{ mr: '-2rem' }} onClick={handleLeftRelate}>
                         <ArrowCircleLeftIcon sx={{ width: '4rem', height: '4rem' }} />
                     </IconButton>
                     {arr}
-                    <IconButton onClick={handleRightRelate}>
+                    <IconButton sx={{ ml: '-2rem' }} onClick={handleRightRelate}>
                         <ArrowCircleRightIcon sx={{ width: '4rem', height: '4rem' }} />
                     </IconButton>
                 </div>

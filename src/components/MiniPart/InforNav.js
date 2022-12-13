@@ -5,6 +5,7 @@ import styles from '../../UserPage/Information/Information.module.scss';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import PasswordIcon from '@mui/icons-material/Password';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import Avatar from '@mui/material/Avatar';
 const KH = require('../../Controller/KhachHangController');
 
@@ -50,6 +51,12 @@ export default function Nav() {
                     <li className={clsx(styles.li)}>
                         <PasswordIcon sx={styleIcon} />
                         <span>Đổi mật khẩu</span>
+                    </li>
+                </Link>
+                <Link className={clsx(styles.link)} to={'/user/signupstore'}>
+                    <li className={clsx(styles.li)}>
+                        <AddBusinessIcon sx={styleIcon} />
+                        <span>Đăng ký bán hàng</span>
                     </li>
                 </Link>
             </ul>

@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CardMedia from '@mui/material/CardMedia';
 import { CardActionArea } from '@mui/material';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+// import FormGroup from '@mui/material/FormGroup';
+// import FormControlLabel from '@mui/material/FormControlLabel';
+// import Checkbox from '@mui/material/Checkbox';
 import Rating from '@mui/material/Rating';
 import cx from 'clsx';
 // import images from '../../assets/images';
@@ -18,7 +18,6 @@ const url = 'http://localhost:8081';
 
 function Main() {
     const [items, setItems] = useState([]);
-    const [checked, setChecked] = useState([true, true, true, true]);
     const id = localStorage.getItem('id');
 
     const { search } = useParams();
@@ -26,29 +25,25 @@ function Main() {
     useEffect(() => {
         async function Get() {
             if (search) setItems(await Items.SEARCH(search));
-            else if (id) setItems(await Items.OnLoad(id));
-            else setItems(await Items.OnLoad());
+            else if (id) {
+                if (await Items.RATED(id)) setItems(await Items.OnLoad(id));
+                else setItems(await Items.OnLoad());
+            } else setItems(await Items.OnLoad());
         }
         Get();
     }, [id, search]);
 
-    Lazy.Lazy(document.getElementsByClassName('obs-cards'));
+    useMemo(() => {
+        let array = items;
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].STATUS === 0) {
+                array.splice(i, 1);
+            }
+        }
+        setItems(array);
+    }, [items]);
 
-    const handleChange1 = (event) => {
-        setChecked([event.target.checked, event.target.checked, event.target.checked, event.target.checked]);
-    };
-    const handleChange2 = (event) => {
-        setChecked([event.target.checked, checked[1], checked[2], checked[3]]);
-    };
-    const handleChange3 = (event) => {
-        setChecked([checked[0], event.target.checked, checked[2], checked[3]]);
-    };
-    const handleChange4 = (event) => {
-        setChecked([checked[0], checked[1], event.target.checked, checked[3]]);
-    };
-    const handleChange5 = (event) => {
-        setChecked([checked[0], checked[1], checked[2], event.target.checked]);
-    };
+    Lazy.Lazy(document.getElementsByClassName('obs-cards'));
 
     var arr = items.map((item, index) => (
         <Link className={cx(styles.link)} key={index} to={`/details/${item.ID_VATPHAM}`}>
@@ -77,7 +72,7 @@ function Main() {
 
     return (
         <div className={cx(styles.container)}>
-            <div className={cx(styles.nav_filter)}>
+            {/* <div className={cx(styles.nav_filter)}>
                 <FormGroup>
                     <FormControlLabel
                         sx={{ '& .MuiFormControlLabel-label': { fontSize: 16 } }}
@@ -135,7 +130,7 @@ function Main() {
                         label="Phụ kiện"
                     />
                 </FormGroup>
-            </div>
+            </div> */}
             <div className={cx(styles.items_grid)}>{arr}</div>
         </div>
     );

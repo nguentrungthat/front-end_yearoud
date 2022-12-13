@@ -1,6 +1,6 @@
 import { DataGrid } from '@mui/x-data-grid';
 import clsx from 'clsx';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, forwardRef } from 'react';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -16,6 +16,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Box from '@mui/material/Box';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TextField from '@mui/material/TextField';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import styles from './MaGiamGia.module.scss';
 import CustomToolbar from '../../components/MiniPart/CustomToolBar';
 
@@ -36,6 +38,7 @@ function MaGiamGia() {
     const [deletion, setDeletion] = useState([]);
     const [update, setUpdate] = useState([]);
     const [selectionModel, setSelectionModel] = useState([]);
+    const [openAlert, setOpenAlert] = useState(false);
 
     useEffect(() => {
         async function Get() {
@@ -53,6 +56,8 @@ function MaGiamGia() {
         Get();
     }, []);
 
+    const handleOpenAlert = () => setOpenAlert(true);
+    const handleCloseAlert = () => setOpenAlert(false);
     const handleOpenModalAdd = () => setOpenModalAdd(true);
     const handleCloseModalAdd = () => setOpenModalAdd(false);
     const handleDelete = () => {
@@ -131,6 +136,18 @@ function MaGiamGia() {
         },
     ];
 
+    const Alert = forwardRef(function Alert(props, ref) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const alert = (
+        <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+            <Alert onClose={handleCloseAlert} severity="success" sx={{ fontSize: '1.4rem', width: '100%' }}>
+                Thay đổi thành công!
+            </Alert>
+        </Snackbar>
+    );
+
     return (
         <div className={clsx(styles.table_container)}>
             <div className={clsx(styles.breadcrumbs)}>
@@ -165,6 +182,7 @@ function MaGiamGia() {
                             setDeletion([]);
                         }
                         setDisLuu(true);
+                        handleOpenAlert();
                     }}
                     disabled={disLuu}
                     className={clsx(styles.btn_action)}
@@ -317,6 +335,7 @@ function MaGiamGia() {
                     </div>
                 </Box>
             </Modal>
+            {alert}
         </div>
     );
 }

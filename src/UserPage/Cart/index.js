@@ -33,6 +33,7 @@ const url = 'http://localhost:8081';
 const ShopCart = require('../../Controller/CartController');
 const Khachhangs = require('../../Controller/KhachHangController');
 const Cuahhangs = require('../../Controller/CuaHangController');
+const MGG = require('../../Controller/MaGiamGiaController');
 
 function Cart() {
     const [items, setItems] = useState([]);
@@ -54,6 +55,9 @@ function Cart() {
     const [diachi, setDiachi] = useState({});
     const [tongtien, setTongtien] = useState(0);
     const [fee, setFee] = useState(0);
+    const [deliveryTime, setDeliveryTime] = useState(new Date().toISOString());
+    const [mgg, setMGG] = useState('');
+    const [coupon, setCoupon] = useState({ GIATRI_GIAM: 0 });
 
     const id = localStorage.getItem('id');
 
@@ -102,7 +106,8 @@ function Cart() {
         const body = await ShopCart.PRE_PURCHASE(khachhangs[0], cuahangs[0], arrItems, ADDRESS);
         console.log(body);
         setFee(body.data.total_fee);
-        setTongtien(tien_tamtinh + body.data.total_fee);
+        setDeliveryTime(body.data.expected_delivery_time);
+        setTongtien(tien_tamtinh + body.data.total_fee - coupon?.GIATRI_GIAM * tien_tamtinh);
     };
     const handleAddPurchase = async () => {
         const ADDRESS = {
@@ -338,12 +343,23 @@ function Cart() {
                 </TableContainer>
                 <div className={cx(styles.cart_coupon)}>
                     <TextField
+                        onChange={(e) => setMGG(e.target.value)}
                         sx={{ width: 220, fontSize: 16, borderRadius: 23 }}
                         label="Mã giảm giá"
                         variant="outlined"
                         inputProps={{ style: { fontSize: '1.6rem' } }}
                     />
-                    <Button sx={{ fontSize: 16, borderRadius: 23 }} variant="contained">
+                    <Button
+                        onClick={async () => {
+                            const code = await MGG.GET_MGG({ MGG: mgg });
+                            console.log(code);
+                            const today = new Date().toISOString();
+                            if (today > code[0].TG_BATDAU && today < code[0].TG_KETTHUC && code[0].ACTIVE === 1)
+                                setCoupon(code[0]);
+                        }}
+                        sx={{ fontSize: 16, borderRadius: 23 }}
+                        variant="contained"
+                    >
                         Thêm mã giảm giá
                     </Button>
                     <Button
@@ -397,6 +413,10 @@ function Cart() {
                             <span className={cx(styles.label)}>Phí vận chuyển:</span>
                             <span className={cx(styles.price)}> {fee} đ</span>
                         </div>
+                        <div className={cx(styles.flex_inline)}>
+                            <span className={cx(styles.label)}>Áp dụng mã giảm:</span>
+                            <span className={cx(styles.price)}> - {coupon?.GIATRI_GIAM * tien_tamtinh} đ</span>
+                        </div>
                     </div>
                     <div className={cx(styles.flex_inline)}>
                         <span className={cx(styles.label)}>Tổng tiền:</span>
@@ -446,6 +466,12 @@ function Cart() {
                         - Địa chỉ giao hàng:{' '}
                         <span className={cx(styles.weight_500)}>
                             {diachi?.ADDRESS}, {diachi?.XA}, {diachi?.HUYEN}, {diachi?.TINH}
+                        </span>
+                    </span>
+                    <span className={cx(styles.details_purchase)}>
+                        - Thời gian giao hàng dự kiến:{' '}
+                        <span className={cx(styles.weight_500)}>
+                            {new Date(deliveryTime).toLocaleString('en-GB').slice(0, 10)}
                         </span>
                     </span>
                     <span className={cx(styles.label)}>Danh sách vật phẩm:</span>
@@ -516,7 +542,7 @@ function Cart() {
                                     <TableCell sx={{ fontSize: 12 }} align="right" />
                                     <TableCell sx={{ fontSize: 12 }} align="right" />
                                     <TableCell sx={{ fontSize: 16, fontWeight: 500 }} align="right">
-                                        - 0
+                                        - {coupon?.GIATRI_GIAM * tien_tamtinh}
                                     </TableCell>
                                 </TableRow>
                                 <TableRow>
@@ -527,7 +553,7 @@ function Cart() {
                                     <TableCell sx={{ fontSize: 16 }} align="right" />
                                     <TableCell sx={{ fontSize: 16 }} align="right" />
                                     <TableCell sx={{ fontSize: 18, fontWeight: 500 }} align="right">
-                                        {tien_tamtinh + fee}
+                                        {tien_tamtinh + fee - coupon?.GIATRI_GIAM * tien_tamtinh}
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
